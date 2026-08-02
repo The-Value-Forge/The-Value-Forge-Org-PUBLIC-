@@ -1,0 +1,28 @@
+{{ define "main" }}
+<div class="container">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+
+  {{/* The reader key, embedded (formerly its own /method/reader-key/ page —
+       an alias on this page preserves that URL). A native section of the page,
+       not a page-within-a-page: plain h2, then the key's sections. */}}
+  <section class="rk rk--embedded" id="reader-key" aria-labelledby="reader-key-title">
+    <div class="page-intro">
+      <h2 id="reader-key-title">How to read this publication</h2>
+      <p>Everything above describes how the intelligence is produced. This key describes how to read it — the lens, the domains, the artefact types, the labels and statuses on every page, and the pattern register.</p>
+    </div>
+    {{ partial "reader-key-body.html" . }}
+  </section>
+
+  {{ if .Pages }}
+    <ul class="content-list" role="list">
+      {{ range .Pages.ByDate.Reverse }}
+        <li class="content-list__item">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+        </li>
+      {{ end }}
+    </ul>
+  {{ end }}
+</div>
+{{ end }}

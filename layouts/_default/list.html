@@ -1,0 +1,23 @@
+{{ define "main" }}
+<div class="container">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+  {{ if .Pages }}
+    {{- $paginator := .Paginate .Pages.ByDate.Reverse -}}
+    <ul class="content-list" role="list">
+      {{ range $paginator.Pages }}
+        <li class="content-list__item">
+          <time class="content-list__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+          {{ range partial "as-slice.html" .Params.evidence_label }}<span class="badge badge--evidence">{{ . }}</span>{{ end }}
+          {{ range partial "as-slice.html" .Params.finding_status }}<span class="badge badge--status badge--{{ . | lower }}">{{ . }}</span>{{ end }}
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+        </li>
+      {{ end }}
+    </ul>
+    {{ partial "pager.html" $paginator }}
+  {{ else }}
+    <p class="empty-state">No entries yet — check back soon.</p>
+  {{ end }}
+</div>
+{{ end }}

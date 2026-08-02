@@ -1,0 +1,33 @@
+[build]
+  # -b $DEPLOY_PRIME_URL: Netlify's per-context deploy URL — the production custom
+  # domain on production builds, but the actual deploy-preview-N--/branch-- subdomain
+  # on previews. $URL is NOT context-aware (it always resolves to the site's primary/
+  # production URL regardless of context), so using it here silently breaks every
+  # absolute link (RSS <link>/<guid>, sitemap.xml, canonical/OG/JSON-LD) on every
+  # preview and branch deploy — they'd all point at production instead of the preview
+  # being viewed. Found + fixed once before (3 Jul audit; docs/CODEBASE-AUDIT-2026-07-03.md
+  # C3); regressed back to $URL since. Do not "fix" this back to $URL.
+  command = "hugo --minify -b $DEPLOY_PRIME_URL && npx pagefind --site public"
+  publish = "public"
+  # Minimise Netlify deploys: skip the build (exit 0) when a commit changed ONLY
+  # non-site files (docs/, .claude/, scripts/, root *.md, .github/). Builds (exit 1)
+  # whenever anything under these site paths changed. Fail-safe: if the diff can't be
+  # computed (e.g. missing cached ref) git errors non-zero → Netlify builds anyway.
+  # Applies to production AND deploy previews.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- content data assets layouts static archetypes i18n hugo.toml netlify.toml package.json"
+
+[build.environment]
+  HUGO_VERSION = "0.147.0"
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/pagefind/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

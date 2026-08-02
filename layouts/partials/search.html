@@ -1,0 +1,23 @@
+<dialog id="search-dialog" aria-label="Site search" aria-modal="true">
+  <button class="search-close" aria-label="Close search">&#x2715;</button>
+  <div id="search-widget"></div>
+</dialog>
+<script src="/pagefind/pagefind-ui.js"></script>
+<script>
+  const toggle = document.querySelector('.searchbtn, .search-toggle');
+  const dialog = document.getElementById('search-dialog');
+  const closeBtn = dialog.querySelector('.search-close');
+  let initialised = false;
+  toggle.addEventListener('click', () => {
+    dialog.showModal();
+    toggle.setAttribute('aria-expanded', 'true');
+    if (!initialised && typeof PagefindUI !== 'undefined') {
+      new PagefindUI({ element: '#search-widget', showImages: false });
+      initialised = true;
+    }
+    dialog.querySelector('input')?.focus();
+  });
+  closeBtn.addEventListener('click', () => { dialog.close(); toggle.setAttribute('aria-expanded', 'false'); });
+  dialog.addEventListener('close', () => toggle.setAttribute('aria-expanded', 'false'));
+  dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
+</script>

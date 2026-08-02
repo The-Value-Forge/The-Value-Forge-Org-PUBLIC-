@@ -1,0 +1,322 @@
+{{ define "main" }}
+
+{{/* ─── 01 Hero ──────────────────────────────────────────── */}}
+<div class="heroband">
+  <div class="container hero">
+
+    <div class="hero-colA rise">
+      <div class="kicker">
+        <span class="eyebrow">The Briefing · {{ now.Format "2 January 2006" }}</span>
+      </div>
+      {{/* Headline: option A from docs/design-system/HERO-HEADLINE-OPTIONS-2026-07.md —
+           the mission sentence doing the work (decision delegated to Claude, 5 Jul 2026). */}}
+      <h1>What good looks like — and the <em>gap</em> made visible<span class="hero-dot">.</span></h1>
+      <p class="hero-stand">Evidence, synthesis, and pattern recognition across the older person’s journey through acute and community care — five clinical domains, one question.</p>
+      <p class="hero-stand2">A curated gallery of intelligence, underpinned by a complete archive of evidence and prior outputs.</p>
+      <a class="more hero-how" href="/method/">How we work <span class="arr">→</span></a>
+    </div>
+
+    {{- $syntheses := where .Site.RegularPages "Section" "synthesis" -}}
+    {{- $pinned := where $syntheses ".Params.featured" true -}}
+    {{- $featuredList := cond (gt (len $pinned) 0) $pinned (first 1 $syntheses) -}}
+    <article class="hero-colB featured rise d2">
+      <div class="fx"><span class="eyebrow">Featured synthesis</span></div>
+      {{- range first 1 $featuredList }}
+      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <p>{{ with .Description }}{{ . }}{{ else }}{{ .Summary | truncate 160 "…" }}{{ end }}</p>
+      <div class="chips">
+        {{- range partial "as-slice.html" .Params.domains }}<span class="chip">{{ . }}</span>{{ end -}}
+      </div>
+      <a class="more featured-more" href="{{ .RelPermalink }}">Read synthesis <span class="arr">→</span></a>
+      {{- else }}
+      <h2>Synthesis in progress</h2>
+      <p>The featured synthesis will appear here. Explore domain intelligence below.</p>
+      <a class="more featured-more" href="/method/">Our method <span class="arr">→</span></a>
+      {{- end }}
+    </article>
+
+    {{/* Hero graphic: the five clinical domains converging on one synthesis point —
+         the publication's thesis made visible. Node size = live signal activity per
+         domain; the corpus caption is real state. Data-driven, not decorative. */}}
+    {{- $sig := where .Site.RegularPages "Section" "signal" -}}
+    {{- $pcount := 0 -}}{{- with .Site.Data.patterns -}}{{- with .patterns -}}{{- $pcount = len . -}}{{- end -}}{{- end -}}
+    {{- $scount := len $sig -}}
+    {{- $nx := 150 -}}{{- $hx := 292 -}}{{- $hy := 292 -}}
+    {{- $doms := slice
+        (dict "code" "D01" "name" "FRAILTY"    "slug" "d01" "y" 128)
+        (dict "code" "D02" "name" "PSYCHOLOGY" "slug" "d02" "y" 210)
+        (dict "code" "D03" "name" "PALLIATIVE" "slug" "d03" "y" 292)
+        (dict "code" "D04" "name" "THERAPIES"  "slug" "d04" "y" 374)
+        (dict "code" "D05" "name" "OPAT"       "slug" "d05" "y" 456) -}}
+    <div class="hero-colC rise d3">
+      <div class="heroviz" role="img" aria-label="The five clinical domains — frailty, psychology, palliative care, therapies and OPAT — converging on one synthesis point; node size reflects each domain's evidence activity">
+        <svg viewBox="0 0 420 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <radialGradient id="hubglow" cx=".5" cy=".5" r=".5">
+              <stop offset="0" style="stop-color:var(--vf-teal-light)" stop-opacity=".5"/>
+              <stop offset="1" style="stop-color:var(--vf-teal)" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="420" height="560" style="fill:var(--vf-ink)"/>
+          {{- /* convergence seams: each domain flows into the synthesis hub */ -}}
+          {{- range $doms }}
+          <path d="M{{ $nx }},{{ .y }} C{{ add $nx 30 }},{{ div (add .y $hy) 2 }} {{ sub $hx 82 }},{{ $hy }} {{ $hx }},{{ $hy }}" fill="none" style="stroke:var(--vf-teal)" stroke-width="1.1" stroke-opacity=".4"/>
+          {{- end }}
+          {{- /* synthesis hub */ -}}
+          <circle cx="{{ $hx }}" cy="{{ $hy }}" r="74" fill="url(#hubglow)"/>
+          <circle cx="{{ $hx }}" cy="{{ $hy }}" r="14" fill="none" style="stroke:var(--vf-teal-light)" stroke-opacity=".38"/>
+          <circle cx="{{ $hx }}" cy="{{ $hy }}" r="6" style="fill:var(--vf-teal-light)"/>
+          <text x="{{ $hx }}" y="{{ add $hy 30 }}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" letter-spacing="2" fill="color-mix(in srgb, var(--vf-teal-light) 55%, transparent)">SYNTHESIS</text>
+          {{- /* domain nodes, sized by live signal activity, with labels */ -}}
+          {{- range $doms }}
+          {{- $n := len (where $sig "Params.domain" "intersect" (slice .slug)) -}}
+          {{- $r := add 3.5 (mul (math.Min $n 12) 0.6) -}}
+          <circle cx="{{ $nx }}" cy="{{ .y }}" r="{{ $r }}" style="fill:var(--vf-teal-light)"/>
+          <text x="{{ add $nx 15 }}" y="{{ add .y 1 }}" font-family="IBM Plex Mono,monospace" font-size="10.5" letter-spacing="1" style="fill:var(--vf-surface)">{{ .code }}</text>
+          <text x="{{ add $nx 15 }}" y="{{ add .y 12 }}" font-family="IBM Plex Mono,monospace" font-size="7.5" letter-spacing="1.5" fill="color-mix(in srgb, var(--vf-surface) 42%, transparent)">{{ .name }}</text>
+          {{- end }}
+          {{- /* corpus caption — real state */ -}}
+          <text x="210" y="34" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" letter-spacing="2" fill="color-mix(in srgb, var(--vf-surface) 32%, transparent)">{{ $pcount }} PATTERN{{ if ne $pcount 1 }}S{{ end }} · {{ $scount }} SIGNAL{{ if ne $scount 1 }}S{{ end }} · {{ now.Format "2006" }}</text>
+        </svg>
+        <span class="viz-plate">Five domains · one synthesis</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{{/* ─── 01b Onboarding strip — wayfinding for first-time readers ────── */}}
+{{ partial "onboarding-strip.html" . }}
+
+{{/* ─── 02 Pattern strip ─────────────────────────────────── */}}
+{{- $patterns := .Site.Data.patterns.patterns -}}
+{{- $pinned2 := where $patterns "pin" true -}}
+{{- $topPattern := index (cond (gt (len $pinned2) 0) $pinned2 $patterns) 0 -}}
+{{- with $topPattern }}
+{{/* Gold VAT treatment only when this pattern is editorially designated
+     VAT-consequential in data/vat_patterns.yaml — gold stays VAT-only. */}}
+{{- $vatIds := slice -}}
+{{- with site.Data.vat_patterns -}}{{- with .ids -}}{{- $vatIds = . -}}{{- end -}}{{- end -}}
+{{- $isVat := in $vatIds .id -}}
+<div class="strip{{ if $isVat }} strip--vat{{ end }}">
+  <div class="container strip-in">
+    <svg class="strip-glyph" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v12"/><path d="M17.196 9 6.804 15"/><path d="m6.804 9 10.392 6"/></svg>
+    <span class="eyebrow strip-label">Current cross-domain pattern</span>
+    <span class="strip-id">{{ .id }}{{ if $isVat }} · VAT{{ end }}</span>
+    <span class="strip-text">{{ .title }}</span>
+    <a class="more" href="/patterns/">Explore pattern <span class="arr">→</span></a>
+  </div>
+</div>
+{{- end }}
+
+<div class="container">
+
+  {{/* ─── 03 Signals + 04 Patterns ────────────────────── */}}
+  <section class="twocol">
+
+    <div>
+      <div class="sechead">
+        <span class="sechead-code">01</span>
+        <span class="eyebrow">Emerging signals</span>
+        <span class="sechead-lead"></span>
+        <a class="more" href="/signal/">All signals <span class="arr">→</span></a>
+      </div>
+      {{- $signals := where .Site.RegularPages "Section" "signal" | first 3 -}}
+      {{- if $signals }}
+      <div class="cards3">
+        {{- range $signals }}
+        <article class="card">
+          <h3><a class="card-link" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <div class="domchips">
+            {{- range $i, $d := partial "as-slice.html" .Params.domains }}{{ if $i }}<i>·</i>{{ end }}{{ $d }}{{ end -}}
+          </div>
+          {{/* No decorative trend graphic here: a chart shape must draw real data or not exist
+               (docs/design-system/FRONT-PAGE-DESIGN-REVIEW-2026-07.md, finding 1). */}}
+          <div class="card-trend">
+            <span class="trendstatus {{ .Params.trend_status | default "emerging" | lower }}">{{ .Params.trend_status | default "Emerging" }}</span>
+          </div>
+          <div class="meta card-age">{{ partial "reldate.html" .Date }}</div>
+        </article>
+        {{- end }}
+      </div>
+      {{- end }}
+    </div>
+
+    <div>
+      <div class="sechead">
+        <span class="sechead-code">02</span>
+        <span class="eyebrow">Patterns</span>
+        <span class="sechead-lead"></span>
+        <a class="more" href="/patterns/">All patterns <span class="arr">→</span></a>
+      </div>
+      {{- if $patterns }}
+      <div class="cards2">
+        {{- range first 2 $patterns }}
+        <article class="card pat">
+          {{/* Constellation drawn from real data: one node per domain the pattern spans,
+               hub = the pattern itself. Layouts precomputed for 2-5 domains. */}}
+          {{- $doms := .domains | default (slice) -}}
+          {{- $n := len $doms -}}
+          {{- if gt $n 5 }}{{ $n = 5 }}{{ end -}}
+          {{- if lt $n 2 }}{{ $n = 2 }}{{ end -}}
+          {{- $layouts := dict
+            "2" (slice (slice 40 18) (slice 64 30))
+            "3" (slice (slice 46 16) (slice 20 30) (slice 72 30))
+            "4" (slice (slice 46 14) (slice 20 30) (slice 72 28) (slice 46 40))
+            "5" (slice (slice 46 14) (slice 16 28) (slice 76 26) (slice 34 40) (slice 60 38))
+          -}}
+          {{- $pts := index $layouts (printf "%d" $n) -}}
+          {{- $hub := index $pts 0 -}}
+          <div class="patviz" aria-hidden="true">
+            <svg width="92" height="48" viewBox="0 0 92 48">
+              {{- range $p := after 1 $pts }}
+              <line x1="{{ index $hub 0 }}" y1="{{ index $hub 1 }}" x2="{{ index $p 0 }}" y2="{{ index $p 1 }}" style="stroke:var(--vf-ink-muted)" stroke-width="1"/>
+              {{- end }}
+              <circle cx="{{ index $hub 0 }}" cy="{{ index $hub 1 }}" r="4.5" style="fill:var(--vf-teal)"/>
+              {{- range $i, $p := after 1 $pts }}
+              {{- if eq $i 0 }}
+              <circle cx="{{ index $p 0 }}" cy="{{ index $p 1 }}" r="4" style="fill:var(--vf-ink)"/>
+              {{- else }}
+              <circle cx="{{ index $p 0 }}" cy="{{ index $p 1 }}" r="4" fill="none" style="stroke:var(--vf-ink-muted)" stroke-width="1.3"/>
+              {{- end }}
+              {{- end }}
+            </svg>
+          </div>
+          <div class="pat-body">
+            <h3><a class="card-link" href="/patterns/#{{ .id | lower }}">{{ .title }}</a></h3>
+            <div class="domchips">
+              {{- range $i, $d := .domains }}{{ if $i }}<i>·</i>{{ end }}{{ $d }}{{ end -}}
+            </div>
+            <span class="pat-level{{ if eq .status "provisional" }} pat-level--prov{{ end }}">{{ .id }} · {{ .status | title }}</span>
+          </div>
+        </article>
+        {{- end }}
+      </div>
+      {{- end }}
+    </div>
+
+  </section>
+
+  {{/* ─── 05 Syntheses + 06 Domains ──────────────────── */}}
+  <section class="twocol">
+
+    <div>
+      <div class="sechead">
+        <span class="sechead-code">03</span>
+        <span class="eyebrow">Latest syntheses</span>
+        <span class="sechead-lead"></span>
+        <a class="more" href="/synthesis/">All syntheses <span class="arr">→</span></a>
+      </div>
+      {{- $synths := where .Site.RegularPages "Section" "synthesis" | first 2 -}}
+      {{- if $synths }}
+      <ul class="synth" role="list">
+        {{- range $synths }}
+        <li>
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <p class="synth-ex">{{ with .Description }}{{ . }}{{ else }}{{ .Summary | truncate 160 "…" }}{{ end }}</p>
+          <span class="meta">{{ range $i, $d := partial "as-slice.html" .Params.domains }}{{ if $i }} · {{ end }}{{ $d }}{{ end }}</span>
+          <span class="meta synth-when">{{ partial "reldate.html" .Date }}</span>
+          {{- with .Params.read_time }}<span class="meta synth-read">{{ . }}</span>{{ end -}}
+        </li>
+        {{- end }}
+      </ul>
+      {{- end }}
+    </div>
+
+    <div>
+      <div class="sechead">
+        <span class="sechead-code">04</span>
+        <span class="eyebrow">Clinical domains</span>
+        <span class="sechead-lead"></span>
+      </div>
+      <div class="doms">
+        {{/* Domain mark: numbered roundel (Set 2, the editor's pick 5 Jul 2026 —
+             docs/design-system/FRONT-PAGE-DESIGN-REVIEW-2026-07.md). The mono code
+             is the identity; no pictogram. */}}
+        {{- range $slug := slice "d01" "d02" "d03" "d04" "d05" }}
+          {{- with $.Site.GetPage (printf "/domain/%s" $slug) }}
+          <a class="dom" href="{{ .RelPermalink }}">
+            <span class="dom-icon"><span class="dom-roundel" aria-hidden="true">{{ substr $slug 1 2 }}</span></span>
+            <span class="dom-code">{{ .Params.domain_code }} · {{ .Title }}</span>
+            <span class="dom-focus">{{ .Description }}</span>
+          </a>
+          {{- end }}
+        {{- end }}
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+{{/* ─── 07 Monthly ─────────────────────────────────────── */}}
+<div class="monthly-band">
+  <svg class="qband-bg" viewBox="0 0 1320 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path d="M-20,280 C310,215 530,248 730,162 C910,86 1090,76 1360,32" fill="none" stroke="color-mix(in srgb, var(--vf-teal) 16%, transparent)" stroke-width="1.4"/>
+    <path d="M-20,305 C330,252 570,274 770,194 C950,124 1120,108 1360,70" fill="none" stroke="color-mix(in srgb, var(--vf-ink-mid) 30%, transparent)" stroke-width="1"/>
+  </svg>
+  <div class="container qband-in">
+    <div>
+      <div class="qx"><span class="eyebrow">05 · Latest monthly review</span></div>
+      {{- $qpages := where .Site.RegularPages "Section" "monthly" | first 1 -}}
+      {{- range first 1 $qpages }}
+      <h2>{{ .Title }}</h2>
+      <p>{{ with .Description }}{{ . }}{{ else }}A domain-spanning deep dive into emerging evidence, system pressures, and how NHS practice stands against world best practice across all five clinical domains.{{ end }}</p>
+      <div class="qed">{{ .Params.edition | default "Edition One" }} · {{ .Params.month | default (.Date.Format "January 2006") }}</div>
+      <a class="more qmore" href="{{ .RelPermalink }}">Read the review <span class="arr">→</span></a>
+      {{- else }}
+      <h2>System pressures and patient outcomes: early signals</h2>
+      <p>A domain-spanning deep dive into emerging evidence, system pressures, and how NHS practice stands against world best practice across all five clinical domains.</p>
+      <div class="qed">Edition One · June 2026</div>
+      <a class="more qmore" href="/monthly/">Read the review <span class="arr">→</span></a>
+      {{- end }}
+    </div>
+    <div class="qstage">
+      <div class="qcover" role="img" aria-label="Monthly review cover: Edition One">
+        <div>
+          <div class="qcover-name">The Value Forge</div>
+          <div class="qcover-sub">Monthly Review</div>
+        </div>
+        <svg viewBox="0 0 300 210" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M-10,175 C70,140 130,162 180,112 C225,68 255,58 320,28" fill="none" style="stroke:var(--vf-teal)" stroke-width="1.6"/>
+          <path d="M-10,190 C82,162 152,178 212,130 C252,96 282,86 320,64" fill="none" style="stroke:var(--vf-ink-mid)" stroke-width="1"/>
+          <circle cx="180" cy="112" r="2.4" style="fill:var(--vf-teal-light)"/>
+        </svg>
+        <div class="qcover-ed">Edition One · June 2026</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{/* ─── 08 Keep receiving the evidence (the return path) ──── */}}
+{{ partial "subscribe.html" . }}
+
+{{/* ─── 09 Archive + Method ───────────────────────────────── */}}
+<div class="container">
+  <div class="support">
+    <div class="sup">
+      <div class="sup-head">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+        <span class="eyebrow">Explore the archive</span>
+      </div>
+      <p>The complete, dated record of every output: signals, syntheses, domain histories, and previous monthly reviews.</p>
+      <a class="more sup-more" href="/archive/">Browse archive <span class="arr">→</span></a>
+    </div>
+    <div class="sup">
+      <div class="sup-head">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 13.74a2 2 0 0 1-2 0L2.5 8.87a1 1 0 0 1 0-1.74L11 2.26a2 2 0 0 1 2 0l8.5 4.87a1 1 0 0 1 0 1.74z"/><path d="m20 14.285 1.5.845a1 1 0 0 1 0 1.74L13 21.74a2 2 0 0 1-2 0l-8.5-4.87a1 1 0 0 1 0-1.74l1.5-.845"/></svg>
+        <span class="eyebrow">Our method</span>
+      </div>
+      <p>Systematic horizon scanning, structured synthesis, cross-domain analysis, and editorial judgement — with honest limits stated.</p>
+      <div class="methods">
+        <div class="method"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.15a1.07 1.07 0 0 1 .691-1.265l13.504-4.44"/><path d="m13.56 11.747 4.332-.924"/><path d="m16 21-3.105-6.21"/><path d="M16.485 5.94a2 2 0 0 1 1.455-2.425l1.09-.272a1 1 0 0 1 1.212.727l1.515 6.06a1 1 0 0 1-.727 1.213l-1.09.272a2 2 0 0 1-2.425-1.455z"/><path d="m6.158 8.633 1.114 4.456"/><path d="m8 21 3.105-6.21"/><circle cx="12" cy="13" r="2"/></svg><span>Scanning</span></div>
+        <div class="method"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 13.74a2 2 0 0 1-2 0L2.5 8.87a1 1 0 0 1 0-1.74L11 2.26a2 2 0 0 1 2 0l8.5 4.87a1 1 0 0 1 0 1.74z"/><path d="m20 14.285 1.5.845a1 1 0 0 1 0 1.74L13 21.74a2 2 0 0 1-2 0l-8.5-4.87a1 1 0 0 1 0-1.74l1.5-.845"/></svg><span>Synthesis</span></div>
+        <div class="method"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10.586 5.414-5.172 5.172"/><path d="m18.586 13.414-5.172 5.172"/><path d="M6 12h12"/><circle cx="12" cy="20" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="20" cy="12" r="2"/><circle cx="4" cy="12" r="2"/></svg><span>Cross-domain</span></div>
+        <div class="method"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg><span>Judgement</span></div>
+      </div>
+      <a class="more sup-more" href="/method/">How we work <span class="arr">→</span></a>
+    </div>
+  </div>
+</div>
+
+{{ end }}

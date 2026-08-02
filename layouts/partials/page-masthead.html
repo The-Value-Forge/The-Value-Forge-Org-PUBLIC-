@@ -1,0 +1,11 @@
+{{/* Unified masthead for section/list/utility pages — the same grammar the
+     article masthead gave signals/syntheses in PR #37 (mono eyebrow → serif
+     title → standfirst), so every page on the site opens in one register.
+     Eyebrow text: frontmatter `eyebrow:` where a page has a better label;
+     otherwise the publication name. */}}
+{{ partial "breadcrumb.html" . }}
+<header class="article-masthead page-masthead">
+  <p class="article-masthead__eyebrow">{{ .Params.eyebrow | default "The Value Forge" }}</p>
+  <h1 class="article-masthead__title">{{ .Title }}</h1>
+  {{ with .Description }}<p class="article-masthead__standfirst">{{ . }}</p>{{ end }}
+</header>

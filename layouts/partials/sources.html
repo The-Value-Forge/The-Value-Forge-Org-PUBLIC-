@@ -1,0 +1,27 @@
+{{- /* Academic source list. Renders .Params.sources (emitted by the
+       translator per charter §6) as a numbered reference list.
+       Fields: authors, title, container (journal or publishing body),
+       year, detail (vol/issue/pages or publisher ref), pmid, doi, url. */ -}}
+{{- with .Params.sources }}
+<section class="sources" aria-label="Sources">
+  <h2 class="sources-label">Sources</h2>
+  <ol class="sources-list">
+    {{- range . }}
+    <li>
+      {{- /* Some pipeline batches emit a single pre-formatted citation: string
+             instead of the structured fields — render it as-is when present. */ -}}
+      {{ with .citation }}{{ strings.TrimSuffix "." . }}.{{ end }}
+      {{ with .authors }}{{ strings.TrimSuffix "." . }}.{{ end }}
+      {{ with .title }}{{ strings.TrimSuffix "." . }}.{{ end }}
+      {{ with .container }}<em>{{ . }}</em>.{{ end }}
+      {{ if or .year .detail }}{{ with .year }}{{ . }}{{ end }}{{ with .detail }};{{ . }}{{ end }}.{{ end }}
+      <span class="sources-links">
+        {{- with .doi }}<a href="https://doi.org/{{ . }}" rel="external noopener">doi:{{ . }}</a>{{ end }}
+        {{- with .pmid }} <a href="https://pubmed.ncbi.nlm.nih.gov/{{ . }}/" rel="external noopener">PMID&nbsp;{{ . }}</a>{{ end }}
+        {{- with .url }} <a href="{{ . }}" rel="external noopener">Source&nbsp;→</a>{{ end }}
+      </span>
+    </li>
+    {{- end }}
+  </ol>
+</section>
+{{- end }}

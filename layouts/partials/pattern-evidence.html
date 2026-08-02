@@ -1,0 +1,27 @@
+{{- /* Renders a pattern history entry's evidence line: structured references
+       (v3.5+ schema: pmid / cite+url) and `supporting` slugs resolved to the
+       site's own signals/syntheses. Context: the history-entry map.
+       Emits nothing for pre-v3.5 entries (their PMIDs live in note prose,
+       auto-linked separately). */ -}}
+{{- $refs := .references -}}
+{{- $sup := .supporting -}}
+{{- if or $refs $sup -}}
+<p class="pat-evidence">
+  <span class="pat-evidence__label">Evidence</span>
+  {{- range $refs }}
+    {{- if .pmid }}
+    <a href="https://pubmed.ncbi.nlm.nih.gov/{{ .pmid }}/" rel="noopener">PMID {{ .pmid }}</a>
+    {{- else if .cite }}
+      {{- if .url }}<a href="{{ .url }}" rel="noopener">{{ .cite }}</a>{{ else }}<span>{{ .cite }}</span>{{ end }}
+    {{- end }}
+  {{- end }}
+  {{- range $sup }}
+    {{- $slug := . -}}
+    {{- $target := "" -}}
+    {{- with site.GetPage (printf "/signal/%s" $slug) }}{{ $target = . }}{{ end -}}
+    {{- if not $target }}{{ with site.GetPage (printf "/synthesis/%s" $slug) }}{{ $target = . }}{{ end }}{{ end -}}
+    {{- if not $target }}{{ with site.GetPage (printf "/monthly/%s" $slug) }}{{ $target = . }}{{ end }}{{ end -}}
+    {{- with $target }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+  {{- end }}
+</p>
+{{- end -}}

@@ -1,0 +1,44 @@
+{{ define "main" }}
+{{- /* Pattern permalink page — the pattern as citable object. Rendered from the
+       page params injected by content/patterns/_content.gotmpl. */ -}}
+{{- $p := .Params.pattern -}}
+<div class="container">
+  <article class="content-body single--pattern" data-pagefind-body>
+    {{ with .Parent }}<a class="back-link" href="{{ .RelPermalink }}"><svg class="back-link__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Back to {{ .Title }}</a>{{ end }}
+    <header class="content-header article-masthead">
+      {{ partial "breadcrumb.html" . }}
+      {{- $since := $p.first_appeared -}}
+      {{- if not $since }}{{ with $p.history }}{{ with index . 0 }}{{ $since = .date }}{{ end }}{{ end }}{{ end -}}
+      <p class="article-masthead__eyebrow">Pattern · {{ $p.id }}{{ with $since }} · Tracked since {{ . }}{{ end }}</p>
+      <h1 class="article-masthead__title">{{ $p.title }}</h1>
+      {{ with $p.confirmation_level }}<p class="article-masthead__standfirst">{{ . }}</p>{{ end }}
+      <div class="article-masthead__meta">
+        <span class="pat-level{{ if ne $p.status "established" }} pat-level--{{ $p.status }}{{ end }}">{{ $p.status | title }}</span>
+        {{- $vat := false -}}
+        {{- with site.Data.vat_patterns }}{{ with .ids }}{{ if in . $p.id }}{{ $vat = true }}{{ end }}{{ end }}{{ end -}}
+        {{ if $vat }}<span class="badge badge--vat">VAT-consequential</span>{{ end }}
+        <span class="article-masthead__dot" aria-hidden="true">·</span>
+        <span>{{ delimit $p.domains " · " }}</span>
+        {{ with .Params.pattern_generated }}<span class="article-masthead__dot" aria-hidden="true">·</span><span>Register updated {{ . }}</span>{{ end }}
+      </div>
+    </header>
+
+    {{ with $p.history }}
+    <section class="pat-record" aria-label="Longitudinal record">
+      <h2 class="pat-record__label">The longitudinal record</h2>
+      <ol class="pat-record__list" role="list">
+        {{ range . }}
+        <li class="pat-record__entry">
+          <p class="pat-record__when">{{ .date }} · {{ .status | title }}</p>
+          <p class="pat-record__note">{{ partial "pmid-link.html" .note }}</p>
+          {{ partial "pattern-evidence.html" . }}
+        </li>
+        {{ end }}
+      </ol>
+    </section>
+    {{ end }}
+
+    <p class="pat-cite">Cite as: The Value Forge, pattern {{ $p.id }} — “{{ $p.title }}”{{ with $since }}, tracked since {{ . }}{{ end }}. CC BY 4.0.</p>
+  </article>
+</div>
+{{ end }}

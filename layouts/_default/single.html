@@ -1,0 +1,53 @@
+{{ define "main" }}
+{{- $slug := "" -}}{{- with .File -}}{{- $slug = .ContentBaseName -}}{{- else -}}{{- $slug = .Title | urlize -}}{{- end -}}
+<div class="container">
+  <article class="content-body single--{{ .Section }}" data-pagefind-body data-slug="{{ $slug }}" data-readtime="{{ .ReadingTime }}">
+    {{/* Pagefind facets — inline key:value form keeps these out of search excerpts */}}
+    {{- if not .Date.IsZero -}}
+    <span data-pagefind-filter="Type:{{ .Section | title }}"></span>
+    {{- range partial "as-slice.html" .Params.domains }}<span data-pagefind-filter="Domain:{{ . }}"></span>{{ end }}
+    {{- range partial "as-slice.html" .Params.finding_status }}<span data-pagefind-filter="Status:{{ . | title }}"></span>{{ end }}
+    {{- end }}
+    {{ with .Parent }}<a class="back-link" href="{{ .RelPermalink }}" data-back><svg class="back-link__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span data-back-label>Back to {{ .Title }}</span></a>{{ end }}
+    <header class="content-header article-masthead">
+      {{ partial "breadcrumb.html" . }}
+      {{- /* Intelligence eyebrow: artefact kind + domain span — the wayfinding the
+             bare header lacked. Section names map to the public vocabulary. */ -}}
+      {{- if not .Date.IsZero }}
+      {{- $kind := .Section | title }}{{ if eq .Section "synthesis" }}{{ $kind = "Weekly synthesis" }}{{ end }}
+      <p class="article-masthead__eyebrow">{{ $kind }}{{ with partial "as-slice.html" .Params.domains }} · {{ delimit . " · " }}{{ end }}</p>
+      {{- end }}
+      <h1 class="article-masthead__title">{{ .Title }}</h1>
+      {{ with .Description }}<p class="article-masthead__standfirst">{{ . }}</p>{{ end }}
+      {{ if not .Date.IsZero }}
+      <div class="article-masthead__meta">
+        <time class="content-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+        <span class="article-masthead__dot" aria-hidden="true">·</span><span>{{ .ReadingTime }} min read</span>
+        {{ range partial "as-slice.html" .Params.evidence_label }}<span class="badge badge--evidence">{{ . }}</span>{{ end }}
+        {{ range partial "as-slice.html" .Params.finding_status }}<span class="badge badge--status badge--{{ . | lower }}">{{ . }}</span>{{ end }}
+      </div>
+      {{ end }}
+    </header>
+    {{ if .Params.vat_signal_text }}
+      <aside class="vat-callout" aria-label="VAT signal">
+        <strong>VAT Signal ({{ .Params.vat_signal_domain | upper }}):</strong>
+        {{ .Params.vat_signal_text }}
+      </aside>
+    {{ end }}
+    <div class="content-text">
+      {{ partial "pattern-link.html" (partial "pmid-link.html" .Content) }}
+    </div>
+    {{ partial "pattern-backlinks.html" . }}
+    {{ partial "sources.html" . }}
+    {{ partial "download.html" . }}
+  </article>
+</div>
+{{- if not .Date.IsZero -}}
+<div class="read-progress" data-read-progress aria-hidden="true" hidden>
+  {{ partial "read-mark.html" (dict "class" "read-mark--progress" "label" "Reading progress") }}
+  <span class="read-progress__time">{{ .ReadingTime }} min</span>
+</div>
+{{- end -}}
+{{- $cardsjs := resources.Get "js/cards.js" | resources.Minify | resources.Fingerprint -}}
+<script src="{{ $cardsjs.RelPermalink }}" integrity="{{ $cardsjs.Data.Integrity }}" defer></script>
+{{ end }}

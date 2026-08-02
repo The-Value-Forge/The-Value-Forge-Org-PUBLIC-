@@ -1,0 +1,35 @@
+baseURL = "/"
+languageCode = "en-GB"
+title = "The Value Forge"
+
+# Render content dated in the future. The Monthly flagship is dated to its source
+# month-end (e.g. a July edition dated 2026-07-31) but is translated and synced
+# earlier in the month; without this it would be treated as future-dated and would
+# silently not render until the month turned over. No other content is future-dated.
+buildFuture = true
+
+[pagination]
+  pagerSize = 24
+
+[taxonomies]
+  domain = "domain"
+  evidence_label = "evidence_label"
+  finding_status = "finding_status"
+  tag = "tags"
+
+[params]
+  description = "Independent clinical intelligence on the older person’s journey through acute and community care — evidence, synthesis, and pattern recognition across five domains"
+  # Config-gated reader-journey activations (empty = feature stays hidden, no broken links):
+  #  subscribe_action — the email form POST url (MailerLite/Buttondown). Set to show the email edition form on the homepage.
+  #  repo_url         — the PUBLIC GitHub repo url. Set ONLY once the public repo exists (Phase 6). Do NOT point at the private spike repo. Activates the "Source" footer link + the open-source line on the homepage.
+  subscribe_action = "https://assets.mailerlite.com/jsonp/2528646/forms/193790359348708473/subscribe"
+  repo_url = ""
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]

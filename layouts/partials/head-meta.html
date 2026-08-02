@@ -1,0 +1,76 @@
+{{- /*
+  head-meta.html — canonical, Open Graph / Twitter, and JSON-LD structured data.
+  Spec: .claude/skills/seo-metadata/SKILL.md. House rules apply in full: the
+  decoupling rule covers every field here; descriptions are page frontmatter
+  (already §8-checked) — never synthesised in the template.
+
+  og:image resolves through the same chain as card art (frontmatter card_image →
+  data/card_art.json), minus the generative-SVG tier: a page with no bitmap gets
+  a summary card, never a broken image URL.
+*/ -}}
+{{- $desc := or .Description .Site.Params.description -}}
+{{- $slug := "" -}}{{- with .File -}}{{- $slug = .ContentBaseName -}}{{- else -}}{{- $slug = .Title | urlize -}}{{- end -}}
+{{- $cardImage := .Params.card_image -}}
+{{- if not $cardImage -}}
+  {{- with site.Data.card_art -}}{{- with .assignments -}}{{- with index . $slug -}}{{- $cardImage = printf "cards/%s" . -}}{{- end -}}{{- end -}}{{- end -}}
+{{- end -}}
+{{- $ogImage := "" -}}
+{{- with $cardImage -}}{{- with resources.Get (printf "images/%s" .) -}}{{- $ogImage = (.Process "webp resize 1200x").Permalink -}}{{- end -}}{{- end -}}
+<link rel="canonical" href="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:type" content="{{ if and .IsPage (not .Date.IsZero) }}article{{ else }}website{{ end }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{ with $ogImage }}<meta property="og:image" content="{{ . }}">
+{{ end }}<meta name="twitter:card" content="{{ if $ogImage }}summary_large_image{{ else }}summary{{ end }}">
+{{- if and .IsPage (not .Date.IsZero) }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02" }}">
+{{- with .Lastmod }}
+<meta property="article:modified_time" content="{{ .Format "2006-01-02" }}">
+{{- end }}
+{{- end }}
+{{- $orgID := printf "%s#org" .Site.BaseURL }}
+<script type="application/ld+json">{{ dict
+  "@context" "https://schema.org"
+  "@type" "Organization"
+  "@id" $orgID
+  "name" .Site.Title
+  "url" .Site.BaseURL
+| jsonify | safeJS }}</script>
+{{- if .IsHome }}
+<script type="application/ld+json">{{ dict
+  "@context" "https://schema.org"
+  "@type" "WebSite"
+  "name" .Site.Title
+  "url" .Site.BaseURL
+  "publisher" (dict "@id" $orgID)
+| jsonify | safeJS }}</script>
+{{- end }}
+{{- if and .IsPage (not .Date.IsZero) }}
+{{- /* Author: the Organization, except the authored lane — Perspectives carries a
+       named byline (the one place bylines are correct); Editorial is the editor's
+       signed voice. Both map a Params.author to a Person node. */ -}}
+{{- $author := dict "@id" $orgID -}}
+{{- with .Params.author }}{{ $author = dict "@type" "Person" "name" . }}{{ end -}}
+{{- $article := dict
+  "@context" "https://schema.org"
+  "@type" "Article"
+  "headline" (.Title | truncate 110)
+  "description" $desc
+  "datePublished" (.Date.Format "2006-01-02")
+  "dateModified" (.Lastmod.Format "2006-01-02")
+  "author" $author
+  "publisher" (dict "@id" $orgID)
+  "license" "https://creativecommons.org/licenses/by/4.0/"
+  "url" .Permalink
+-}}
+{{- with $ogImage }}{{ $article = merge $article (dict "image" .) }}{{ end }}
+<script type="application/ld+json">{{ $article | jsonify | safeJS }}</script>
+{{- end }}
+{{- /* Speculation rules — prerender likely-next pages on ~200ms hover (moderate).
+       Chromium-only progressive enhancement; Safari/Firefox ignore the block.
+       /feed/ excluded (100-item page — prerendering it wastes the work). */}}
+<script type="speculationrules">
+{"prerender":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/feed/*"}}]},"eagerness":"moderate"}]}
+</script>

@@ -1,0 +1,8 @@
+{{- /* Coerce a param that may be a scalar or a slice into a slice, so templates can
+       safely `range` over it. Returns an empty slice for nil/empty input. The pipeline
+       translator has historically emitted taxonomy-ish fields (evidence_label,
+       finding_status, domain) as both scalars and arrays; this keeps a shape drift from
+       hard-failing the build. */ -}}
+{{ $v := . }}
+{{ if not $v }}{{ $v = slice }}{{ else if not (reflect.IsSlice $v) }}{{ $v = slice $v }}{{ end }}
+{{ return $v }}

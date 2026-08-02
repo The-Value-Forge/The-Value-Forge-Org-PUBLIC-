@@ -1,0 +1,31 @@
+{{- /* "Contributes to" chips: the automatic inverse of the register's provenance.
+       A pattern claims this article when the article's slug appears in any of its
+       history entries' `supporting` arrays (v3.5+ structured provenance), or —
+       fallback for the pre-v3.5 record — when the article body names the id.
+       Context: the Page. Renders nothing when no pattern claims the article. */ -}}
+{{- $slug := "" -}}
+{{- with .File -}}{{- $slug = .ContentBaseName -}}{{- else -}}{{- $slug = .Title | urlize -}}{{- end -}}
+{{- $raw := .RawContent -}}
+{{- $claimed := slice -}}
+{{- with site.Data.patterns -}}
+{{- range .patterns -}}
+  {{- $hit := false -}}
+  {{- range .history -}}
+    {{- range .supporting -}}
+      {{- if eq . $slug -}}{{- $hit = true -}}{{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $hit -}}
+    {{- if findRE (printf `%s\b` .id) $raw 1 -}}{{- $hit = true -}}{{- end -}}
+  {{- end -}}
+  {{- if $hit -}}{{- $claimed = $claimed | append . -}}{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- with $claimed -}}
+<nav class="pat-backlinks" aria-label="Patterns this article contributes to">
+  <span class="pat-backlinks__label">Patterns</span>
+  {{- range . }}
+  <a class="pat-backlinks__chip" href="{{ printf "/patterns/%s/" (.id | lower) | relURL }}">{{ .id }} · {{ .title }}</a>
+  {{- end }}
+</nav>
+{{- end -}}

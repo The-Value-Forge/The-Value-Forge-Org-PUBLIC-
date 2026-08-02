@@ -1,0 +1,13 @@
+public/
+node_modules/
+package-lock.json
+resources/
+.hugo_build.lock
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Feedback triage staging — raw responses, never committed (curated entries go in
+# data/feedback.json by hand). See docs/design-system/FEEDBACK-PROCESS-MAP-v1.md.
+data/_feedback_staging*.json

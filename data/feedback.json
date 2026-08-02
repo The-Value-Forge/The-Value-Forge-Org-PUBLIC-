@@ -1,0 +1,5 @@
+{
+  "generated": "2026-06-20",
+  "note": "Curated, anonymised ledger of tester feedback and our responses. Edited in-repo (like card_art.json) - never auto-published, so entries can be themed and anonymised first. Entry schema: { \"date\": \"YYYY-MM-DD\", \"theme\": \"what was said, aggregated/anonymised - never identities or raw identifying text\", \"status\": \"Received|Planned|Done|Declined|Out of scope\", \"response\": \"what we did (may contain inline HTML)\", \"link\": \"/optional/path/to/the/change/\", \"domains\": [\"d01\"] }",
+  "entries": []
+}

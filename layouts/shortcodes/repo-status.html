@@ -1,0 +1,10 @@
+{{/* Config-gated repo-status line for the open-source page. Mirrors the
+     subscribe.html / feedback page pattern: safe placeholder until
+     site.Params.repo_url is set (Phase 6), then switches to the real link
+     in one config edit — no template change needed at go-live. */}}
+{{- with site.Params.repo_url }}
+<p>The source is public.</p>
+<p><strong><a href="{{ . }}" rel="noopener">Read the source and full revision history &rarr;</a></strong></p>
+{{- else }}
+<p>Not yet public. The site is in its early build phase, and the source currently lives in a private repository while that settles. It will be published here once that's ready — this page will link straight to it the moment it is.</p>
+{{- end }}

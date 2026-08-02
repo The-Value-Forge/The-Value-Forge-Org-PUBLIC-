@@ -1,0 +1,5 @@
+{{- $cite := .Get "cite" | default (.Get 0) -}}
+<figure class="pullquote">
+  <blockquote>{{ .Inner | .Page.RenderString }}</blockquote>
+  {{- with $cite }}<figcaption>{{ . }}</figcaption>{{ end -}}
+</figure>

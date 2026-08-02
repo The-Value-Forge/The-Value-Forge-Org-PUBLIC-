@@ -1,0 +1,67 @@
+{{ define "main" }}
+<div class="container">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+
+  <div class="tl" id="tvf-timeline">
+    <div class="tl-controls" role="group" aria-label="Timeline filters">
+      <button type="button" class="tl-chip is-active" data-filter="all">All</button>
+      <button type="button" class="tl-chip" data-filter="signal">Signals</button>
+      <button type="button" class="tl-chip" data-filter="synthesis">Syntheses</button>
+      <button type="button" class="tl-chip" data-filter="pattern">Patterns</button>
+      <button type="button" class="tl-chip tl-chip--toggle" data-toggle="cross" aria-pressed="false">Cross-domain only</button>
+    </div>
+
+    <div class="tl-board">
+      <div class="tl-lanes">
+        <div class="tl-lane-label tl-lane-label--axis" aria-hidden="true"></div>
+        <div class="tl-lane-label tl-lane-label--patterns"><span class="tl-lane-code">VF-P</span>Patterns</div>
+        <div class="tl-lane-label"><span class="tl-lane-code">D01</span>Acute Frailty</div>
+        <div class="tl-lane-label"><span class="tl-lane-code">D02</span>Clinical Psychology</div>
+        <div class="tl-lane-label"><span class="tl-lane-code">D03</span>Palliative Care</div>
+        <div class="tl-lane-label"><span class="tl-lane-code">D04</span>Therapies &amp; AHPs</div>
+        <div class="tl-lane-label"><span class="tl-lane-code">D05</span>OPAT</div>
+      </div>
+      <div class="tl-scroll">
+        <svg class="tl-svg" aria-label="Evidence timeline chart"></svg>
+      </div>
+    </div>
+
+    <div class="tl-tip" role="status" hidden></div>
+
+    <p class="tl-legend">
+      <span class="tl-legend-item"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" class="tl-key-signal"/></svg> Signal</span>
+      <span class="tl-legend-item"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" class="tl-key-synthesis"/></svg> Synthesis</span>
+      <span class="tl-legend-item"><svg width="12" height="12" aria-hidden="true"><rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" class="tl-key-pattern"/></svg> Pattern</span>
+      <span class="tl-legend-item">Dot size = evidence weight</span>
+      <span class="tl-legend-item">Vertical threads = cross-domain convergence</span>
+    </p>
+
+    <noscript>
+      <p class="empty-state">The interactive timeline needs JavaScript. Browse <a href="/signal/">Signals</a>, <a href="/synthesis/">Syntheses</a>, and the <a href="/patterns/">Pattern register</a> directly.</p>
+    </noscript>
+  </div>
+
+  {{ $findings := slice }}
+  {{ range where site.RegularPages "Section" "in" (slice "signal" "synthesis") }}
+    {{ $findings = $findings | append (dict
+        "title" .Title
+        "url" .RelPermalink
+        "date" (.Date.Format "2006-01-02")
+        "type" .Section
+        "domains" (partial "as-slice.html" .Params.domain)
+        "evidence" (partial "as-slice.html" .Params.evidence_label)
+        "status" (partial "as-slice.html" .Params.finding_status)
+        "summary" (.Description | plainify)) }}
+  {{ end }}
+  {{ $pats := slice }}{{ $gen := "" }}
+  {{ with site.Data.patterns }}
+    {{ $pats = .patterns | default (slice) }}
+    {{ $gen = .generated | default "" }}
+  {{ end }}
+  {{ $data := dict "findings" $findings "patterns" $pats "generated" $gen }}
+  <script type="application/json" id="tl-data">{{ $data | jsonify | safeJS }}</script>
+  {{ $js := resources.Get "js/timeline.js" | resources.Minify | resources.Fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+</div>
+{{ end }}

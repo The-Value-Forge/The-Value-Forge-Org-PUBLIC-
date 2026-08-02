@@ -1,0 +1,39 @@
+{
+  "_comment": "Art assignment manifest. Managed by scripts/art_sync.py \u2014 do not hand-edit assignments. Pool and last_used are auto-maintained. Manual card_image in frontmatter always takes precedence and bypasses this file.",
+  "assignments": {
+    "2026-06-12-corridor-care-first-national-data": "d01/D1 Care Planning and End of Life.png",
+    "2026-05-22-ceftriaxone-mssa-bloodstream-infections": "d05/Designer (36).png",
+    "2026-06-12-specialist-palliative-care-coding": "d03/Designer (28).png",
+    "2026-05-22-earlier-specialist-palliative-care-acute-hospitalisation": "cross/designer-44.png",
+    "2026-05-22-news2-virtual-ward-poor-predictor": "cross/designer-43.png",
+    "2026-06-12-hero-trial-frailty-rehabilitation": "cross/designer-42.png",
+    "2026-06-19-acp-gap-severe-frailty-convergence": "cross/designer-41.png",
+    "2026-06-19-homehealth-rct-vcse-frailty-prevention": "cross/designer-40.png",
+    "2026-06-19-opat-oral-switch-antimicrobial-stewardship": "cross/designer-39.png",
+    "2026-05-22-earlier-specialist-input-five-domains-confirmed": "cross/designer-39.png",
+    "2026-06-12-week-ending-12-june": "cross/designer-39.png",
+    "2026-06-19-week-ending-19-june": "cross/designer-39.png",
+    "2026-06-26-ceftriaxone-mssa-mortality-signal": "d05/designer-34.png",
+    "2026-06-26-hospital-at-home-preserves-function": "d01/d1-funtional-and-physical.png",
+    "2026-06-26-news2-virtual-ward-risk-stratification": "d01/d1-care-planning-and-end-of-life.png",
+    "2026-06-27-week-ending-27-june": "cross/designer-39.png",
+    "2026-07-03-home-rehabilitation-meta-analysis": "d04/designer-27.png",
+    "2026-07-03-mltc-covid-recovery": "d02/d2-06-change-growth-recovery.png",
+    "2026-07-03-structured-coding-end-of-life-outcomes": "d03/designer-9.png",
+    "2026-07-03-week-ending-3-july": "cross/designer-44.png",
+    "2026-07-05-hero-extended-rehabilitation-frailty": "cross/designer-43.png",
+    "2026-07-10-carer-resourcing-advance-care-planning-dementia": "d03/designer-28.png",
+    "2026-07-10-composite-frailty-tools-outperform-guideline-scales": "d01/d1-cognitive-and-neurological.png",
+    "2026-07-10-extended-interval-dosing-opat-three-visits": "d05/designer-33.png",
+    "2026-07-10-week-ending-10-july": "cross/designer-42.png",
+    "2026-07-workforce-training-posts-unresolved-allocation": "cross/designer-41.png"
+  },
+  "last_used": {
+    "d01": "d1-cognitive-and-neurological.png",
+    "d02": "d2-06-change-growth-recovery.png",
+    "d03": "designer-28.png",
+    "d04": "designer-27.png",
+    "d05": "designer-33.png",
+    "cross": "designer-41.png"
+  }
+}

@@ -1,0 +1,19 @@
+{{ if not .IsHome }}
+<nav aria-label="Breadcrumb">
+  <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <a href="/" itemprop="item"><span itemprop="name">Home</span></a>
+      <meta itemprop="position" content="1">
+    </li>
+    {{ if and .Parent (not .Parent.IsHome) }}
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="{{ .Parent.RelPermalink }}" itemprop="item"><span itemprop="name">{{ .Parent.Title }}</span></a>
+        <meta itemprop="position" content="2">
+      </li>
+    {{ end }}
+    <li aria-current="page">
+      <span>{{ .Title }}</span>
+    </li>
+  </ol>
+</nav>
+{{ end }}

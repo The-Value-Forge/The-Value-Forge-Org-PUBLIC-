@@ -1,0 +1,54 @@
+{{ define "main" }}
+<div class="container">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+
+  <p class="tl-crosslink"><a href="/patterns/timeline/">View the evidence timeline →</a></p>
+
+  {{ $p := .Site.Data.patterns }}
+  {{ if and $p $p.patterns }}
+  <p class="patreg-meta">
+    {{ len $p.patterns }} patterns · Source: {{ $p.source }} · Intelligence window: {{ $p.intelligence_window }} · Generated {{ $p.generated }}
+  </p>
+
+  <div class="patreg" data-pagefind-body>
+    {{ range $p.patterns }}
+    <article class="patreg-item" id="{{ .id | lower }}">
+      <div class="patreg-head">
+        <span class="patreg-id">{{ .id }}</span>
+        <span class="pat-level{{ if eq .status "provisional" }} pat-level--prov{{ end }}">{{ .status | title }}</span>
+        {{- /* first_appeared is in the translator schema but the live pipeline has
+               omitted it; fall back to the earliest history entry's date. */ -}}
+        {{- $since := .first_appeared -}}
+        {{- if not $since }}{{ with .history }}{{ with index . 0 }}{{ $since = .date }}{{ end }}{{ end }}{{ end -}}
+        {{- with $since }}<span class="patreg-since">Since {{ . }}</span>{{ end }}
+      </div>
+      <h2><a class="patreg-link" href="{{ printf "/patterns/%s/" (.id | lower) | relURL }}">{{ .title }}</a></h2>
+      <div class="domchips">
+        {{- range $i, $d := .domains }}{{ if $i }}<i>·</i>{{ end }}{{ $d }}{{ end -}}
+      </div>
+      <p class="patreg-conf">{{ .confirmation_level }}</p>
+      {{ with .history }}
+      <details class="patreg-hist-wrap">
+        <summary>
+          <span class="patreg-hist-label">History · {{ len . }} {{ if eq (len .) 1 }}entry{{ else }}entries{{ end }}</span>
+          <svg class="patreg-chev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <dl class="patreg-hist">
+          {{ range . }}
+          <div class="patreg-hist-row">
+            <dt>{{ .date }} · {{ .status | title }}</dt>
+            <dd>{{ partial "pmid-link.html" .note }}{{ partial "pattern-evidence.html" . }}</dd>
+          </div>
+          {{ end }}
+        </dl>
+      </details>
+      {{ end }}
+    </article>
+    {{ end }}
+  </div>
+  {{ else }}
+  <p class="empty-state">Pattern data will appear here once the pipeline is connected (Phase 3).</p>
+  {{ end }}
+</div>
+{{ end }}

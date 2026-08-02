@@ -1,0 +1,21 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container footer-in">
+    <span class="footer-name">The Value Forge</span>
+    <ul class="footer-links" role="list">
+      <li><a href="/about/">About</a></li>
+      <li><a href="/archive/">Archive</a></li>
+      <li><a href="/method/">Method</a></li>
+      <li><a href="/editorial/">Editorial</a></li>
+      <li><a href="/perspectives/">Perspectives</a></li>
+      <li><a href="/feedback/">Feedback</a></li>
+      <li><a href="/legal/">Legal</a></li>
+      <li><a href="/index.xml">RSS</a></li>
+      {{- with site.Params.repo_url }}<li><a href="{{ . }}" rel="noopener">Source</a></li>{{- end }}
+      <li><a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC&nbsp;BY&nbsp;4.0</a></li>
+    </ul>
+    <span class="footer-codes">D01 · D02 · D03 · D04 · D05 — 2026</span>
+    {{- if ne site.Params.alpha_phase false }}
+    <p class="footer-alpha">Alpha — this site is in early build; some elements (the email edition, the feedback form) are still being finished. <a href="/method/">Read the method</a>.</p>
+    {{- end }}
+  </div>
+</footer>

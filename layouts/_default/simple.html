@@ -1,0 +1,10 @@
+{{ define "main" }}
+<div class="container">
+  <article class="simple-page">
+    {{ partial "page-masthead.html" . }}
+    <div class="page-intro">
+      {{ .Content }}
+    </div>
+  </article>
+</div>
+{{ end }}

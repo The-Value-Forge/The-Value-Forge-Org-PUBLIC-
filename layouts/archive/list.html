@@ -1,0 +1,88 @@
+{{ define "main" }}
+<div class="container exhibition" data-pagefind-ignore>
+
+  <header class="exhibition__masthead">
+    {{ partial "breadcrumb.html" . }}
+    <h1>{{ .Title }}</h1>
+    <p class="exhibition__lede">A standing record of what good looks like — assessed in time, across five domains.</p>
+    <div class="exhibition__util">
+      <a href="/archive/browse/">Explore the full catalogue &rarr;</a>
+      <a href="/archive/browse/#archive-search">Search the archive</a>
+    </div>
+  </header>
+
+  {{/* NOW ON — current exhibition: latest Monthly review (the flagship), else featured synthesis, else latest synthesis */}}
+  {{- $monthly := (where site.RegularPages "Section" "monthly").ByDate.Reverse -}}
+  {{- $synth := (where site.RegularPages "Section" "synthesis").ByDate.Reverse -}}
+  {{- $featured := where $synth "Params.featured" true -}}
+  {{- $current := false -}}
+  {{- if gt (len $monthly) 0 }}{{ $current = index $monthly 0 }}
+  {{- else if gt (len $featured) 0 }}{{ $current = index $featured 0 }}
+  {{- else if gt (len $synth) 0 }}{{ $current = index $synth 0 }}{{ end -}}
+  {{- with $current }}
+  <section class="exhibition__now" aria-labelledby="now-label">
+    <p class="wall-label" id="now-label">Now on · {{ .Date.Format "January 2006" }} · {{ .Section | title }}</p>
+    <a class="now-card" href="{{ .RelPermalink }}">
+      <h2 class="now-card__title">{{ .Title }}</h2>
+      {{ with .Params.description }}<p class="now-card__desc">{{ . }}</p>{{ end }}
+      <span class="now-card__cta">Read the edition &rarr;</span>
+    </a>
+  </section>
+  {{- end }}
+
+  {{/* COLLECTIONS — the five standing galleries (auto from the domain pages) */}}
+  <section class="collections" aria-labelledby="coll-label">
+    <p class="section-head" id="coll-label">Collections</p>
+    {{- range slice "d01" "d02" "d03" "d04" "d05" -}}
+      {{- with site.GetPage (printf "/domain/%s" .) -}}
+      <a class="collection-row" href="{{ .RelPermalink }}">
+        <span class="collection-row__no">{{ .Params.domain_code }}</span>
+        <span class="collection-row__body">
+          <span class="collection-row__name">{{ .Title }}</span>
+          {{ with .Description }}<span class="collection-row__caption">{{ . }}</span>{{ end }}
+        </span>
+        <span class="collection-row__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+      {{- end -}}
+    {{- end -}}
+  </section>
+
+  {{/* THREADS — cross-domain patterns (auto from data/patterns.json) */}}
+  {{- with site.Data.patterns.patterns }}
+  <section class="threads" aria-labelledby="thr-label">
+    <p class="section-head" id="thr-label">Threads</p>
+    <ul class="threads__list">
+      {{- range . -}}
+      <li class="threads__item">
+        <a class="threads__link" href="/patterns/#{{ .id | lower }}">
+          <span class="threads__title"><span class="threads__mark" aria-hidden="true">&#8767;</span> {{ .title }}</span>
+          <span class="threads__meta">{{ .id }} · spans {{ len .domains }} domain{{ if gt (len .domains) 1 }}s{{ end }}{{ with .status }} · {{ . }}{{ end }}</span>
+        </a>
+      </li>
+      {{- end -}}
+    </ul>
+  </section>
+  {{- end }}
+
+  {{/* LATEST — recent acquisitions (auto, newest first) */}}
+  {{- $latest := (where site.RegularPages "Section" "in" (slice "signal" "synthesis")).ByDate.Reverse -}}
+  {{- with $latest }}
+  <section class="latest" aria-labelledby="lat-label">
+    <p class="section-head" id="lat-label">Latest</p>
+    <ul class="latest__list">
+      {{- range first 6 . -}}
+      <li class="latest__row">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+        <span class="latest__domain">{{ with partial "as-slice.html" .Params.domain }}{{ delimit . " · " | upper }}{{ end }}</span>
+        <span class="latest__type">{{ .Section | title }}</span>
+        <a class="latest__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+      </li>
+      {{- end -}}
+    </ul>
+  </section>
+  {{- end }}
+
+  <p class="exhibition__door"><a href="/archive/browse/">Explore the full catalogue &rarr;</a></p>
+
+</div>
+{{ end }}

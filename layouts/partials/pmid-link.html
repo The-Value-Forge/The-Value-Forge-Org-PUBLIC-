@@ -1,0 +1,5 @@
+{{- /* Auto-link PMID citations to PubMed. Accepts a string (or rendered
+       HTML) and wraps every "PMID 12345678" / "PMID: 12345678" in a link.
+       Content-side change is zero: the translator keeps writing plain
+       PMIDs and the site makes them clickable. */ -}}
+{{- . | replaceRE `PMID(:?\s*)(\d{6,9})` `<a href="https://pubmed.ncbi.nlm.nih.gov/$2/" rel="external noopener">PMID$1$2</a>` | safeHTML -}}

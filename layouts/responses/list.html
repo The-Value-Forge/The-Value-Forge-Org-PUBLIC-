@@ -1,0 +1,50 @@
+{{ define "main" }}
+<div class="container feedback">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+
+  {{/* ── Intake: Google Form embed (activated by form_url in frontmatter) ── */}}
+  <section class="feedback__intake" aria-labelledby="give-label">
+    <p class="section-head" id="give-label">Give feedback</p>
+    {{- with .Params.form_url }}
+    <div class="feedback__form-wrap">
+      <iframe class="feedback__form" src="{{ . }}" loading="lazy" title="The Value Forge feedback form">Loading the feedback form…</iframe>
+    </div>
+    {{- else }}
+    <p class="feedback__placeholder">The feedback form is being set up. In the meantime, suggestions are welcome via the channels on the <a href="/about/">About</a> page.</p>
+    {{- end }}
+  </section>
+
+  {{/* ── Status key ── */}}
+  <section class="feedback__key" aria-label="What the statuses mean">
+    <span class="q-pill q-pill--neutral">Received</span>
+    <span class="q-pill q-pill--teal">Planned</span>
+    <span class="q-pill q-pill--teal">Done&nbsp;✓</span>
+    <span class="q-pill q-pill--red">Declined</span>
+    <span class="q-pill q-pill--neutral">Out of scope</span>
+  </section>
+
+  {{/* ── Ledger: You said, we did ── */}}
+  {{- $cls := dict "Received" "q-pill--neutral" "Planned" "q-pill--teal" "Done" "q-pill--teal" "Declined" "q-pill--red" "Out of scope" "q-pill--neutral" -}}
+  <section class="feedback__ledger" aria-labelledby="ledger-label">
+    <p class="section-head" id="ledger-label">You said, we did</p>
+    {{- with site.Data.feedback.entries }}
+    <ul class="ledger__list" role="list">
+      {{- range . }}
+      <li class="ledger__item">
+        <div class="ledger__meta">
+          <time datetime="{{ .date }}">{{ dateFormat "2 Jan 2006" .date }}</time>
+          <span class="q-pill {{ index $cls .status | default "q-pill--neutral" }}">{{ .status }}</span>
+          {{- with .domains }}<span class="ledger__domains">{{ delimit . " · " | upper }}</span>{{ end }}
+        </div>
+        <p class="ledger__said"><span class="ledger__tag">You said</span>{{ .theme }}</p>
+        <p class="ledger__did"><span class="ledger__tag">We did</span>{{ .response | safeHTML }}{{ with .link }} <a href="{{ . }}">See the change →</a>{{ end }}</p>
+      </li>
+      {{- end }}
+    </ul>
+    {{- else }}
+    <p class="ledger__empty">Nothing logged yet. As soon as testers start telling us things, this is where we record — publicly — what we heard and what we did about it.</p>
+    {{- end }}
+  </section>
+</div>
+{{ end }}

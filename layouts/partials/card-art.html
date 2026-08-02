@@ -1,0 +1,103 @@
+{{/*
+  Card art partial. Context: the Page (.).
+  Image source, in priority order:
+    1. card_image: in frontmatter — path relative to assets/images/
+       (e.g. "cards/d01/d1-functional-and-physical.png"). A manual pin, or
+       injected by art_sync.py.
+    2. data/card_art.json assignment for this slug — the durable record kept
+       by art_sync.py. Read here so the image survives content re-syncs that
+       overwrite the post file (which strip any injected card_image: line).
+    3. Generative slug-seeded SVG — the fallback. It renders whenever there is
+       NO usable image: no assignment at all, OR an assignment whose file
+       cannot be resolved (missing / renamed / trashed image, casing drift).
+       The SVG is therefore a genuine safety net — nothing breaks to a blank
+       card; if the bitmap is gone, the generative art takes its place.
+
+  CROP: images are shown as a slug-seeded crop via background-position,
+  so every card shows a different section of its source image — no two
+  posts look identical even when sharing the same pool image.
+  Seed derives two 0–100 percentages from hash.FNV32a of the slug.
+*/}}
+{{- $slug := "" -}}
+{{- with .File -}}{{- $slug = .ContentBaseName -}}{{- else -}}{{- $slug = .Title | urlize -}}{{- end -}}
+{{- $cardImage := .Params.card_image -}}
+{{- if not $cardImage -}}
+  {{- with site.Data.card_art -}}{{- with .assignments -}}{{- with index . $slug -}}{{- $cardImage = printf "cards/%s" . -}}{{- end -}}{{- end -}}{{- end -}}
+{{- end -}}
+{{- /* Resolve the asset. $src stays falsy if there is no assignment OR the file is missing,
+       so a broken image falls through to the SVG fallback rather than a blank card. */ -}}
+{{- $src := "" -}}
+{{- with $cardImage -}}{{- $src = resources.Get (printf "images/%s" .) -}}{{- end -}}
+{{- if $src -}}
+  {{- $img := $src.Process "webp resize 1200x" -}}
+  {{/* px/py from independently-salted hashes: deriving both from one seed made the
+       crops cluster (TODO carried item, fixed 5 Jul 2026). Salt as a PREFIX — FNV
+       has weak avalanche on suffix changes (a last-byte difference shifts the hash
+       by one prime multiple, which is ≡ ±4 mod 101, so x/y stayed correlated). */}}
+  {{- $px := mod (hash.FNV32a (printf "x-%s" $slug)) 101 -}}
+  {{- $py := mod (hash.FNV32a (printf "y-%s" $slug)) 101 -}}
+  <div class="gallery-card__art gallery-card__art--img" role="img" aria-label="Card artwork">
+    <span class="gallery-card__zoom" style="background-image:url('{{ $img.RelPermalink }}');transform-origin:{{ $px }}% {{ $py }}%"></span>
+  </div>
+{{- else -}}
+  {{- $s := hash.FNV32a $slug -}}
+  {{- $d := "d00" -}}{{- with partial "as-slice.html" .Params.domain -}}{{- $d = index . 0 | lower -}}{{- end -}}
+  {{- $count := add 5 (mod (div $s 17) 5) -}}
+  {{- $b := mod (div $s 6) 7 -}}
+  <div class="gallery-card__art" aria-hidden="true">
+    <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" class="card-art card-art--{{ $d }}">
+      <rect width="400" height="500" fill="var(--vf-surface)"/>
+      <rect width="400" height="500" fill="var(--vf-teal-light)" opacity="0.45"/>
+      <g fill="none" stroke-linecap="round">
+      {{- if eq $d "d01" -}}
+        {{/* Acute Frailty — strata seams */}}
+        {{- range $i := (seq $count) -}}
+          {{- $y := add 60 (mul $i 50) -}}
+          {{- $bow := add 22 (mul (mod (add $i $b) 4) 18) -}}
+          <path d="M-30 {{ $y }} Q200 {{ sub $y $bow }} 430 {{ $y }}" stroke="{{ if eq (mod $i 2) 0 }}var(--vf-teal){{ else }}var(--vf-ink){{ end }}" stroke-width="{{ if eq (mod $i 2) 0 }}1.6{{ else }}1.1{{ end }}" opacity="{{ if eq (mod $i 2) 0 }}0.55{{ else }}0.3{{ end }}"/>
+        {{- end -}}
+      {{- else if eq $d "d02" -}}
+        {{/* Clinical Psychology — interference waves */}}
+        {{- range $i := (seq $count) -}}
+          {{- $y := add 70 (mul $i 48) -}}
+          {{- $amp := add 18 (mul (mod (add $i $b) 3) 14) -}}
+          <path d="M-30 {{ $y }} Q90 {{ sub $y $amp }} 200 {{ $y }} T430 {{ $y }}" stroke="var(--vf-teal)" stroke-width="1.4" opacity="0.5"/>
+          <path d="M-30 {{ add $y 16 }} Q90 {{ add $y $amp }} 200 {{ add $y 16 }} T430 {{ add $y 16 }}" stroke="var(--vf-ink)" stroke-width="1" opacity="0.28"/>
+        {{- end -}}
+      {{- else if eq $d "d03" -}}
+        {{/* Palliative Care — radial rings */}}
+        {{- $cx := add 150 (mul (mod $s 5) 20) -}}
+        {{- $cy := add 200 (mul (mod (div $s 5) 5) 22) -}}
+        {{- range $i := (seq (add $count 2)) -}}
+          <circle cx="{{ $cx }}" cy="{{ $cy }}" r="{{ mul $i 32 }}" stroke="{{ if eq (mod $i 2) 0 }}var(--vf-teal){{ else }}var(--vf-ink){{ end }}" stroke-width="{{ if eq (mod $i 2) 0 }}1.5{{ else }}1{{ end }}" opacity="{{ if eq (mod $i 2) 0 }}0.5{{ else }}0.28{{ end }}"/>
+        {{- end -}}
+      {{- else if eq $d "d04" -}}
+        {{/* Therapies & AHPs — woven lattice */}}
+        {{- range $i := (seq (add $count 3)) -}}
+          {{- $x := add (mul $i 42) (mod $s 18) -}}
+          <line x1="{{ $x }}" y1="-10" x2="{{ sub $x 36 }}" y2="510" stroke="var(--vf-teal)" stroke-width="1.2" opacity="0.42"/>
+        {{- end -}}
+        {{- range $i := (seq $count) -}}
+          {{- $y := add (mul $i 56) (mod (div $s 7) 26) -}}
+          <line x1="-10" y1="{{ $y }}" x2="410" y2="{{ add $y 26 }}" stroke="var(--vf-ink)" stroke-width="1" opacity="0.3"/>
+        {{- end -}}
+      {{- else if eq $d "d05" -}}
+        {{/* OPAT — orbital ellipses (dose cycles) */}}
+        {{- range $i := (seq $count) -}}
+          {{- $rx := add 48 (mul $i 20) -}}
+          {{- $ry := add 150 (mul $i 5) -}}
+          {{- $ang := mul $i (add 20 (mod $s 14)) -}}
+          <ellipse cx="200" cy="250" rx="{{ $rx }}" ry="{{ $ry }}" transform="rotate({{ $ang }} 200 250)" stroke="{{ if eq (mod $i 2) 0 }}var(--vf-teal){{ else }}var(--vf-ink){{ end }}" stroke-width="{{ if eq (mod $i 2) 0 }}1.5{{ else }}1{{ end }}" opacity="{{ if eq (mod $i 2) 0 }}0.48{{ else }}0.26{{ end }}"/>
+        {{- end -}}
+      {{- else -}}
+        {{/* Cross-domain / none — the ∞ seam, echoed */}}
+        {{- range $i := (seq $count) -}}
+          {{- $oy := add (mul $i 30) (mod $s 20) -}}
+          {{- $sc := add 4 $i -}}
+          <path transform="translate(0 {{ sub $oy 40 }}) scale({{ $sc }})" d="M30 15C26 8 22 3.5 15 3.5C7 3.5 2.5 8.5 2.5 15C2.5 21.5 7 26.5 15 26.5C22 26.5 26 22 30 15C34 8 38 3.5 45 3.5C53 3.5 57.5 8.5 57.5 15C57.5 21.5 53 26.5 45 26.5C38 26.5 34 22 30 15Z" stroke="{{ if eq (mod $i 2) 0 }}var(--vf-teal){{ else }}var(--vf-ink){{ end }}" stroke-width="0.4" opacity="0.4"/>
+        {{- end -}}
+      {{- end -}}
+      </g>
+    </svg>
+  </div>
+{{- end -}}

@@ -1,0 +1,97 @@
+name: Drive → GitHub sync
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NOTE FOR READERS OF THE PUBLIC REPOSITORY
+#
+# This file is published so the pipeline that produces the site is inspectable —
+# it is the real workflow, not a sanitised illustration. But it does NOT run
+# here. This repository is a published mirror; the live pipeline runs in the
+# private working repository, which holds the Drive credentials.
+#
+# In the working repo this is scheduled daily:
+#
+#     schedule:
+#       - cron: '0 7 * * *'   # daily 07:00 UTC
+#
+# That trigger is deliberately removed in this copy. Left in, the cron fires
+# here every day, finds no GDRIVE_SERVICE_ACCOUNT_KEY / GDRIVE_FOLDER_ID and
+# fails — which is exactly what happened for the first two days after this
+# repo was published (26 Jul 2026). A permanently red Actions tab on a
+# repository whose purpose is to show the method working is worse than useless.
+#
+# workflow_dispatch is kept: on a public repo only users with write access can
+# trigger it, so a visitor cannot run it.
+# ─────────────────────────────────────────────────────────────────────────────
+on:
+  workflow_dispatch:  # manual only — see the note above
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Drive client
+        run: pip install --quiet google-api-python-client google-auth
+
+      - name: Sync Drive output folder
+        id: drive_sync
+        env:
+          GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: python scripts/drive_sync.py
+
+      - name: Sync Art Pool (assign + download curated images)
+        env:
+          GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
+          ART_POOL_FOLDER_ID: ${{ secrets.ART_POOL_FOLDER_ID }}
+        run: python scripts/art_sync.py
+
+      - name: Commit any new or changed files
+        run: |
+          git config user.name "TVF Pipeline Bot"
+          git config user.email "pipeline-bot@users.noreply.github.com"
+          git add content/signal/ content/synthesis/ content/monthly/ \
+                  data/patterns.json data/card_art.json \
+                  assets/images/cards/
+          if git diff --staged --quiet; then
+            echo "No changes — Drive output folder unchanged since last run."
+          else
+            COUNT=$(git diff --staged --name-only | wc -l)
+            git commit -m "sync: $COUNT file(s) from Drive output folder [$(date -u +%Y-%m-%dT%H:%MZ)]"
+            git push
+          fi
+
+      # ---- Alerting (runs AFTER the commit so good content always lands) ----
+      # GitHub only emails on a FAILED run; annotations alone leave the run
+      # green and silent — how the 19-Jun break stayed invisible for 13 days.
+
+      - name: Content freshness canary (weekly cycle heartbeat)
+        run: |
+          newest=$(ls content/signal content/synthesis 2>/dev/null \
+                   | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)
+          if [ -z "$newest" ]; then echo "::error::No dated content found at all"; exit 1; fi
+          age_days=$(( ( $(date -u +%s) - $(date -u -d "$newest" +%s) ) / 86400 ))
+          echo "Newest signal/synthesis is dated $newest (${age_days}d old)"
+          if [ "$age_days" -gt 9 ]; then
+            echo "::error::WEEKLY CYCLE APPEARS TO HAVE STOPPED — newest content is ${age_days} days old (>9). Check: translator ran Saturday? Slots 2/3 wrote to ROUTINE-OUTPUTS? Drive readable? This failure is the heartbeat working, not necessarily a sync bug."
+            exit 1
+          fi
+
+      - name: Fail loudly if pattern-register guards fired
+        if: steps.drive_sync.outputs.guard_failures != '' && steps.drive_sync.outputs.guard_failures != '0'
+        run: |
+          echo "::error::PATTERN REGISTER PROTECTED — ${{ steps.drive_sync.outputs.guard_failures }} guard failure(s). The incoming patterns file would have lost or rewritten existing record and was HELD. See the step summary. Content otherwise synced normally; this red run exists so you get the email."
+          exit 1

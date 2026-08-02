@@ -1,0 +1,12 @@
+{
+  "name": "tvf-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "hugo --minify && npx pagefind --site public",
+    "dev": "hugo server"
+  },
+  "devDependencies": {
+    "pagefind": "^1.3.0"
+  }
+}

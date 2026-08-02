@@ -1,0 +1,78 @@
+{{ define "main" }}
+<div class="container">
+  <article data-pagefind-body>
+    <header class="domain-header">
+      {{ partial "breadcrumb.html" . }}
+      {{ with .Params.domain_code }}<p class="domain-code" aria-label="Domain code">{{ . }}</p>{{ end }}
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="hero-strap">{{ . }}</p>{{ end }}
+    </header>
+    {{ with .Content }}
+    <details class="domain-assessment">
+      <summary class="domain-assessment__bar">
+        <span class="domain-assessment__label">Domain assessment</span>
+        {{ with $.Params.assessment }}<span class="domain-assessment__date">Assessed {{ .assessed }}{{ with .version }} · v{{ . }}{{ end }}</span>{{ end }}
+        <span class="domain-assessment__hint" aria-hidden="true">Read the assessment</span>
+      </summary>
+      <div class="domain-assessment__body content-text">
+        {{ partial "pmid-link.html" . }}
+        {{ partial "sources.html" $ }}
+        {{- with $.Params.assessment -}}
+        <div class="assessment-history">
+          <p class="assessment-history__meta">Version {{ .version | default 1 }}{{ with .assessed }} · assessed {{ . }}{{ end }}{{ with .next_review }} · next review {{ . }}{{ end }}</p>
+          {{- with .prior_versions -}}
+          <details class="assessment-history__prior">
+            <summary>Previous assessments ({{ len . }})</summary>
+            <ul>
+              {{- range . -}}
+              <li><span class="assessment-history__v">v{{ .version }}</span> <time>{{ .assessed }}</time>{{ with .note }} — {{ . }}{{ end }}{{ with .url }} · <a href="{{ . }}">archived version</a>{{ end }}</li>
+              {{- end -}}
+            </ul>
+          </details>
+          {{- else -}}
+          <p class="assessment-history__none">This is the first assessment — no prior versions yet. Superseded assessments will be preserved here as the evidence moves.</p>
+          {{- end -}}
+        </div>
+        {{- end -}}
+      </div>
+    </details>
+    {{ end }}
+    {{- $domainKey := .Params.domain_code | lower -}}
+    {{- /* Filter via as-slice rather than a `where … intersect` clause: intersect
+           silently drops pages whose domain frontmatter drifted to a scalar. */ -}}
+    {{- $domainSignals := slice -}}
+    {{- range where .Site.RegularPages "Section" "signal" -}}
+      {{- if in (partial "as-slice.html" .Params.domain) $domainKey -}}{{- $domainSignals = $domainSignals | append . -}}{{- end -}}
+    {{- end -}}
+    {{- $domainSyntheses := slice -}}
+    {{- range where .Site.RegularPages "Section" "synthesis" -}}
+      {{- if in (partial "as-slice.html" .Params.domain) $domainKey -}}{{- $domainSyntheses = $domainSyntheses | append . -}}{{- end -}}
+    {{- end -}}
+    <div class="domain-sections">
+      <section aria-labelledby="ew-heading">
+        <h2 id="ew-heading">Signals</h2>
+        {{ range first 5 $domainSignals }}
+          <article class="content-item">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </article>
+        {{ else }}
+          <p class="empty-state">Signals for this domain will appear here once the pipeline is connected.</p>
+        {{ end }}
+      </section>
+      <section aria-labelledby="syn-heading">
+        <h2 id="syn-heading">Syntheses</h2>
+        {{ range first 5 $domainSyntheses }}
+          <article class="content-item">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </article>
+        {{ else }}
+          <p class="empty-state">Syntheses for this domain will appear here once the pipeline is connected.</p>
+        {{ end }}
+      </section>
+    </div>
+    {{ partial "download.html" . }}
+  </article>
+</div>
+{{ end }}

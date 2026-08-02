@@ -1,0 +1,35 @@
+{{ define "main" }}
+<div class="container">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+  {{ if .Pages }}
+    {{ $editions := .Pages.ByDate.Reverse }}
+    {{ $current := index $editions 0 }}
+    {{/* The flagship's shelf: the current edition as a cover, prior editions as
+         ledger rows — the archive exhibition register, applied to the Monthly. */}}
+    <section class="edition-current" aria-label="Current edition">
+      <p class="edition-current__eyebrow">Current edition{{ with $current.Params.edition }} · {{ . }}{{ end }} · {{ $current.Params.month | default ($current.Date.Format "January 2006") }}</p>
+      <h2 class="edition-current__title"><a href="{{ $current.RelPermalink }}">{{ $current.Title }}</a></h2>
+      {{ with $current.Description }}<p class="edition-current__standfirst">{{ . }}</p>{{ end }}
+      <p class="edition-current__meta">{{ $current.Date.Format "2 January 2006" }}{{ with $current.Params.read_time }} · {{ . }}{{ end }}</p>
+      <a class="more" href="{{ $current.RelPermalink }}">Read the edition →</a>
+    </section>
+    {{ with after 1 $editions }}
+    <section class="edition-previous" aria-label="Previous editions">
+      <h2 class="edition-previous__label">Previously</h2>
+      <ul class="edition-previous__list" role="list">
+        {{ range . }}
+        <li class="edition-previous__row">
+          <span class="edition-previous__when">{{ with .Params.edition }}{{ . }} · {{ end }}{{ .Params.month | default (.Date.Format "January 2006") }}</span>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          {{ with .Description }}<p>{{ . }}</p>{{ end }}
+        </li>
+        {{ end }}
+      </ul>
+    </section>
+    {{ end }}
+  {{ else }}
+    <p class="empty-state">Monthly editions will appear here. The Monthly is produced from the monthly meta-synthesis pipeline and published automatically.</p>
+  {{ end }}
+</div>
+{{ end }}

@@ -1,0 +1,119 @@
+/* =====================================================================
+   THE VALUE FORGE — print / offprint stylesheet
+   Design Frontier wave 1 (Jul 2026). The article as a document that
+   survives leaving the screen: NHS readers circulate PDFs by email, so
+   the printed page is a distribution channel, not an afterthought.
+   Register carries over: Georgia body, mono furniture, hairlines.
+   ===================================================================== */
+@media print {
+
+  @page {
+    margin: 20mm;
+    /* Margin boxes: Chromium 131+ only; degrade silently elsewhere. */
+    @top-right {
+      content: "The Value Forge";
+      font-family: Georgia, serif;
+      font-size: 9pt;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 8pt;
+    }
+  }
+
+  /* Screen chrome off */
+  .site-header,
+  .site-footer,
+  .download-bar,
+  #search-dialog,
+  .searchbtn,
+  nav[aria-label="Primary navigation"],
+  .back-link,
+  .read-progress,
+  .ednote__more,
+  .pager,
+  [data-noprint] { display: none !important; }
+
+  /* Page + body */
+  html, body { background: #fff; }
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.5pt;
+    line-height: 1.45;
+    color: #000;
+  }
+  .container { max-width: 100%; padding: 0; }
+  .content-text, .content-body { max-width: 100%; }
+
+  /* Headings — keep the editorial register; never orphan a heading */
+  h1, h2, h3, h4 {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #000;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  h1 { font-size: 19pt; line-height: 1.15; }
+  h2 { font-size: 13.5pt; }
+  h3 { font-size: 11.5pt; }
+
+  p, li { orphans: 3; widows: 3; }
+
+  /* Mono furniture becomes small bordered text — no colour dependence */
+  .content-date, .badge, time, .breadcrumb {
+    font-family: "IBM Plex Mono", Menlo, monospace;
+    font-size: 8pt;
+    letter-spacing: 0.06em;
+    color: #000;
+  }
+  .badge {
+    border: 0.75pt solid #000;
+    border-radius: 0;
+    padding: 1pt 4pt;
+    background: none !important;
+  }
+
+  /* Links: crisp black on paper (out-specify screen link colours); print the
+     destination for external links only */
+  a, .sources a, .sources-links a, .breadcrumb, .breadcrumb a {
+    color: #000 !important;
+    text-decoration: none;
+  }
+  .content-text a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-family: "IBM Plex Mono", Menlo, monospace;
+    font-size: 8pt;
+  }
+
+  /* Evidence apparatus — the point of the offprint: sources stay visible */
+  .sources, .sources-list { display: block !important; color: #000; }
+  .sources li { color: #000; }
+  .sources-label { font-weight: bold; color: #000; }
+  .vat-callout {
+    border: 1.5pt solid #000;
+    padding: 8pt 10pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Structure: hairlines survive; decoration doesn't */
+  figure, table, blockquote, .ednote { break-inside: avoid; page-break-inside: avoid; }
+  table { border-collapse: collapse; }
+  th, td { border-bottom: 0.5pt solid #000; padding: 3pt 6pt; }
+  hr { border: none; border-top: 0.5pt solid #000; }
+
+  /* Card art and generative SVG are screen furniture */
+  .gallery-card__art, .card-art, .heroviz, img.decorative { display: none !important; }
+
+  /* Citation line — every printed article states its provenance */
+  .content-body::after {
+    content: "The Value Forge · independent clinical intelligence · CC BY 4.0";
+    display: block;
+    margin-top: 18pt;
+    padding-top: 6pt;
+    border-top: 0.5pt solid #000;
+    font-family: "IBM Plex Mono", Menlo, monospace;
+    font-size: 8pt;
+    letter-spacing: 0.08em;
+  }
+}

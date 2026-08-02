@@ -1,0 +1,73 @@
+{{- $sec := .Section -}}
+<nav aria-label="Primary navigation">
+  <ul class="nav-list" role="list">
+    <li><a href="/"{{ if .IsHome }} aria-current="page"{{ end }}>Briefing</a></li>
+    <li><a href="/signal/"{{ if eq $sec "signal" }} aria-current="true"{{ end }}>Signals</a></li>
+    <li><a href="/synthesis/"{{ if eq $sec "synthesis" }} aria-current="true"{{ end }}>Syntheses</a></li>
+    <li><a href="/feed/"{{ if eq $sec "feed" }} aria-current="true"{{ end }}>Feed</a></li>
+    <li class="nav-dd">
+      <a href="/patterns/" aria-haspopup="true" aria-expanded="false" id="nav-patterns-btn"{{ if eq $sec "patterns" }} aria-current="true"{{ end }}>Patterns
+        <svg class="nav-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </a>
+      <ul class="dd-menu" role="list" aria-labelledby="nav-patterns-btn">
+        <li><a href="/patterns/"><span class="dc">VF-P</span>Pattern register</a></li>
+        <li><a href="/patterns/timeline/"><span class="dc">TL</span>Evidence Timeline</a></li>
+      </ul>
+    </li>
+    <li class="nav-dd">
+      <a href="/monthly/" aria-haspopup="true" aria-expanded="false" id="nav-monthly-btn"{{ if or (eq $sec "monthly") (eq $sec "editorial") (eq $sec "perspectives") }} aria-current="true"{{ end }}>Monthly
+        <svg class="nav-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </a>
+      <ul class="dd-menu" role="list" aria-labelledby="nav-monthly-btn">
+        <li><a href="/monthly/"><span class="dc">MR</span>The review</a></li>
+        <li><a href="/editorial/"><span class="dc">ED</span>Editorial</a></li>
+        <li><a href="/perspectives/"><span class="dc">PS</span>Perspectives</a></li>
+      </ul>
+    </li>
+    <li class="nav-dd">
+      <a href="/domain/" aria-haspopup="true" aria-expanded="false" id="nav-domains-btn"{{ if eq $sec "domain" }} aria-current="true"{{ end }}>Domains
+        <svg class="nav-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </a>
+      <ul class="dd-menu" role="list" aria-labelledby="nav-domains-btn">
+        <li><a href="/domain/d01/"><span class="dc">D01</span>Acute Frailty</a></li>
+        <li><a href="/domain/d02/"><span class="dc">D02</span>Clinical Psychology</a></li>
+        <li><a href="/domain/d03/"><span class="dc">D03</span>Palliative Care</a></li>
+        <li><a href="/domain/d04/"><span class="dc">D04</span>Therapies &amp; AHPs</a></li>
+        <li><a href="/domain/d05/"><span class="dc">D05</span>OPAT</a></li>
+        <li class="dd-all"><a href="/domain/">All domains →</a></li>
+      </ul>
+    </li>
+    <li><a href="/archive/"{{ if eq $sec "archive" }} aria-current="true"{{ end }}>Archive</a></li>
+    <li class="nav-dd">
+      <a href="/method/" aria-haspopup="true" aria-expanded="false" id="nav-method-btn"{{ if eq $sec "method" }} aria-current="true"{{ end }}>Method
+        <svg class="nav-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </a>
+      <ul class="dd-menu" role="list" aria-labelledby="nav-method-btn">
+        <li><a href="/method/"><span class="dc">HW</span>How we work</a></li>
+        <li><a href="/method/open-source/"><span class="dc">OS</span>Open source</a></li>
+      </ul>
+    </li>
+    <li><a href="/about/"{{ if eq $sec "about" }} aria-current="true"{{ end }}>About</a></li>
+  </ul>
+  <button class="searchbtn" aria-label="Search" aria-expanded="false" aria-controls="search-dialog">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+  </button>
+</nav>
+<script>
+(function(){
+  document.querySelectorAll('.nav-dd > a').forEach(function(btn){
+    function open(){ btn.setAttribute('aria-expanded','true'); }
+    function close(){ btn.setAttribute('aria-expanded','false'); }
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      btn.getAttribute('aria-expanded') === 'true' ? close() : open();
+    });
+    document.addEventListener('click', function(e){
+      if (!btn.closest('.nav-dd').contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') close();
+    });
+  });
+})();
+</script>

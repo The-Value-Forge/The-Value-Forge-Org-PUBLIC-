@@ -1,0 +1,139 @@
+{{ define "main" }}
+<div class="container catalogue" data-pagefind-ignore>
+  <header class="catalogue__head">
+    {{ partial "breadcrumb.html" . }}
+    <h1>{{ .Title }}</h1>
+    <p class="catalogue__lede">The complete dated record. Search the archive below, or browse by period.</p>
+  </header>
+
+  {{/* dedicated archival search — scoped to this catalogue */}}
+  <div class="catalogue__search" id="archive-search"></div>
+
+  {{- $pages := where site.RegularPages "Section" "in" (slice "signal" "synthesis" "monthly") -}}
+  {{- $byYear := $pages.ByDate.Reverse.GroupByDate "2006" -}}
+  <p class="catalogue__count">{{ len $pages }} entries</p>
+
+  {{/* period quick-links — jump to any year */}}
+  {{- if gt (len $byYear) 1 }}
+  <nav class="cat-jump" aria-label="Jump to year">
+    <span class="cat-jump__label">Jump to</span>
+    {{- range $byYear -}}
+    <a href="#yr-{{ .Key }}">{{ .Key }}</a>
+    {{- end -}}
+  </nav>
+  {{- end }}
+
+  {{/* Filter by evidence type / finding status — client-side only, so it works
+       against the already-rendered rows below without a second data source.
+       The values here are the ones actually in use across content (checked
+       against frontmatter, 23 Jul 2026); add to both lists together if a new
+       label enters use. */}}
+  <div class="cat-filter" id="cat-filter" data-pagefind-ignore>
+    <div class="cat-filter__group" role="group" aria-label="Filter by evidence type">
+      <span class="cat-filter__label">Evidence</span>
+      {{- range (slice "Meta-analysis" "Primary Study" "Synthesis" "Audit/Data" "VF-Signal") }}
+      <button type="button" class="cat-chip" data-filter="evidence" data-value="{{ . }}" aria-pressed="false">{{ . }}</button>
+      {{- end }}
+    </div>
+    <div class="cat-filter__group" role="group" aria-label="Filter by finding status">
+      <span class="cat-filter__label">Status</span>
+      {{- range (slice "NEW" "CONFIRMED" "UPDATED" "DISCARDED") }}
+      <button type="button" class="cat-chip" data-filter="status" data-value="{{ . }}" aria-pressed="false">{{ . }}</button>
+      {{- end }}
+    </div>
+    <button type="button" class="cat-chip cat-chip--clear" id="cat-filter-clear" hidden>Clear filters</button>
+  </div>
+  <p class="cat-filter__empty" id="cat-filter-empty" hidden>No entries match the selected filters.</p>
+
+  {{- range $i, $yr := $byYear -}}
+  <details class="cat-year" id="yr-{{ $yr.Key }}"{{ if eq $i 0 }} open{{ end }}>
+    <summary class="cat-year__sum">{{ $yr.Key }} <span class="cat-year__count">({{ len $yr.Pages }})</span></summary>
+    {{- range $mi, $mo := $yr.Pages.ByDate.Reverse.GroupByDate "January 2006" -}}
+    <details class="cat-month"{{ if and (eq $i 0) (eq $mi 0) }} open{{ end }}>
+      <summary class="cat-month__sum">{{ $mo.Key }} <span class="cat-month__count">({{ len $mo.Pages }})</span></summary>
+      <ul class="cat-list" role="list">
+        {{- range $mo.Pages.ByDate.Reverse -}}
+        {{- $evidence := partial "as-slice.html" .Params.evidence_label -}}
+        {{- $status := partial "as-slice.html" .Params.finding_status -}}
+        <li class="cat-row" data-evidence="|{{ delimit $evidence "|" }}|" data-status="|{{ delimit $status "|" }}|">
+          <time class="cat-row__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+          <span class="cat-row__domain">{{ with partial "as-slice.html" .Params.domain }}{{ delimit . " · " | upper }}{{ end }}</span>
+          <span class="cat-row__type">{{ .Section | title }}</span>
+          <a class="cat-row__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+        {{- end -}}
+      </ul>
+    </details>
+    {{- end -}}
+  </details>
+  {{- else -}}
+  <p class="empty-state">No entries yet.</p>
+  {{- end -}}
+
+  <p class="catalogue__back"><a href="/archive/">&larr; Back to the archive</a></p>
+</div>
+{{/* pagefind-ui.js is already loaded by the search.html partial in baseof */}}
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (typeof PagefindUI === 'undefined') return;
+    new PagefindUI({ element: '#archive-search', showImages: false, showSubResults: true });
+  });
+</script>
+<script>
+  (function () {
+    var filterBar = document.getElementById('cat-filter');
+    if (!filterBar) return;
+    var clearBtn = document.getElementById('cat-filter-clear');
+    var emptyMsg = document.getElementById('cat-filter-empty');
+    var active = { evidence: new Set(), status: new Set() };
+
+    function apply() {
+      var anyActive = active.evidence.size > 0 || active.status.size > 0;
+      clearBtn.hidden = !anyActive;
+      var rows = document.querySelectorAll('.cat-row');
+      var visibleCount = 0;
+      rows.forEach(function (row) {
+        var evidenceOk = active.evidence.size === 0 ||
+          Array.from(active.evidence).some(function (v) { return row.dataset.evidence.indexOf('|' + v + '|') !== -1; });
+        var statusOk = active.status.size === 0 ||
+          Array.from(active.status).some(function (v) { return row.dataset.status.indexOf('|' + v + '|') !== -1; });
+        var show = evidenceOk && statusOk;
+        row.hidden = !show;
+        if (show) visibleCount++;
+      });
+      document.querySelectorAll('.cat-month').forEach(function (month) {
+        var rows = month.querySelectorAll('.cat-row');
+        var visible = Array.from(rows).some(function (r) { return !r.hidden; });
+        month.hidden = anyActive && !visible;
+        if (anyActive && visible) month.open = true;
+      });
+      document.querySelectorAll('.cat-year').forEach(function (year) {
+        var months = year.querySelectorAll('.cat-month');
+        var visible = Array.from(months).some(function (m) { return !m.hidden; });
+        year.hidden = anyActive && !visible;
+        if (anyActive && visible) year.open = true;
+      });
+      emptyMsg.hidden = !(anyActive && visibleCount === 0);
+    }
+
+    filterBar.querySelectorAll('.cat-chip[data-filter]').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var group = active[chip.dataset.filter];
+        var pressed = chip.getAttribute('aria-pressed') === 'true';
+        if (pressed) { group.delete(chip.dataset.value); } else { group.add(chip.dataset.value); }
+        chip.setAttribute('aria-pressed', String(!pressed));
+        apply();
+      });
+    });
+
+    clearBtn.addEventListener('click', function () {
+      active.evidence.clear();
+      active.status.clear();
+      filterBar.querySelectorAll('.cat-chip[data-filter]').forEach(function (chip) {
+        chip.setAttribute('aria-pressed', 'false');
+      });
+      apply();
+    });
+  })();
+</script>
+{{ end }}

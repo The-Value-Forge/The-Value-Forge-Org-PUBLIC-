@@ -1,0 +1,53 @@
+{{/*
+  Card gallery + snap-scroll reader.
+  Args: { "pages": <page slice>, "section": <bool>, "reader": <bool>, "toggle": <bool> }
+  reader: start in reader mode
+  toggle: show the grid/reader toggle bar (default false)
+*/}}
+{{- $pages := .pages -}}
+{{- $showSection := .section | default false -}}
+{{- $reader := .reader | default false -}}
+{{- $toggle := .toggle | default false -}}
+{{- if $pages -}}
+<div class="card-gallery-wrap{{ if $reader }} is-reader{{ end }}" data-card-gallery>
+  {{- if $toggle -}}
+  <div class="gallery-bar">
+    <p class="gallery-count"><span data-unread-count>0</span> unread · {{ len $pages }} total</p>
+    <div class="gallery-modes" role="group" aria-label="View mode">
+      <button type="button" class="gallery-mode{{ if not $reader }} is-active{{ end }}" data-mode="grid" aria-pressed="{{ if $reader }}false{{ else }}true{{ end }}">Grid</button>
+      <button type="button" class="gallery-mode{{ if $reader }} is-active{{ end }}" data-mode="reader" aria-pressed="{{ if $reader }}true{{ else }}false{{ end }}">Reader</button>
+    </div>
+  </div>
+  {{- else -}}
+  <div class="gallery-bar">
+    <p class="gallery-count"><span data-unread-count>0</span> unread · {{ len $pages }} total</p>
+  </div>
+  {{- end -}}
+  <ul class="card-gallery" role="list">
+    {{- range $pages -}}
+      {{- $slug := "" -}}{{- with .File -}}{{- $slug = .ContentBaseName -}}{{- else -}}{{- $slug = .Title | urlize -}}{{- end -}}
+      <li class="gallery-card" data-slug="{{ $slug }}">
+        {{ partial "card-art.html" . }}
+        <div class="gallery-card__body">
+          <div class="gallery-card__meta">
+            <time class="gallery-card__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+            {{ if $showSection }}<span class="badge badge--section">{{ .Section | title }}</span>{{ end }}
+            {{ range partial "as-slice.html" .Params.finding_status }}<span class="badge badge--status badge--{{ . | lower }}">{{ . }}</span>{{ end }}
+          </div>
+          <h3 class="gallery-card__title">{{ .Title }}</h3>
+          {{ with .Params.description }}<p class="gallery-card__desc">{{ . }}</p>{{ end }}
+          <div class="gallery-card__foot">
+            <span class="gallery-card__read">{{ partial "read-mark.html" (dict "class" "read-mark--card") }}<span class="gallery-card__readlabel" data-read-label>Unread</span></span>
+            <span class="gallery-card__time">{{ .ReadingTime }} min</span>
+          </div>
+        </div>
+        <a class="gallery-card__link" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
+      </li>
+    {{- end -}}
+  </ul>
+</div>
+{{- $cardsjs := resources.Get "js/cards.js" | resources.Minify | resources.Fingerprint -}}
+<script src="{{ $cardsjs.RelPermalink }}" integrity="{{ $cardsjs.Data.Integrity }}" defer></script>
+{{- else -}}
+  <p class="empty-state">No entries yet — check back soon.</p>
+{{- end -}}

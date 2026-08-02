@@ -1,0 +1,6 @@
+{{- $diff := now.Sub . -}}
+{{- $days := int (div $diff.Hours 24) -}}
+{{- if lt $days 1 }}Today
+{{- else if eq $days 1 }}Yesterday
+{{- else if lt $days 7 }}{{ $days }} days ago
+{{- else }}{{ .Format "2 January 2006" }}{{ end -}}

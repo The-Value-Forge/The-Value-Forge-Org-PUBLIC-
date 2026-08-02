@@ -1,0 +1,9 @@
+{{ define "main" }}
+<div class="container">
+  {{ partial "page-masthead.html" . }}
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+  {{- $paginator := .Paginate .Pages.ByDate.Reverse -}}
+  {{ partial "card-grid.html" (dict "pages" $paginator.Pages "section" false "toggle" true) }}
+  {{ partial "pager.html" $paginator }}
+</div>
+{{ end }}

@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="container container--feed">
+  {{- $signals   := where .Site.RegularPages "Section" "signal" -}}
+  {{- $syntheses := where .Site.RegularPages "Section" "synthesis" -}}
+  {{- $monthly := where .Site.RegularPages "Section" "monthly" -}}
+  {{/* Feed is a "what's flowing now" surface, not the archive — cap at the
+       most recent 100; the full record lives in /archive/browse/. */}}
+  {{- $all := (union (union $signals $syntheses) $monthly).ByDate.Reverse | first 100 -}}
+  {{ partial "card-grid.html" (dict "pages" $all "section" true "reader" true "toggle" true) }}
+</div>
+{{ end }}

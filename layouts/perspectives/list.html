@@ -1,0 +1,41 @@
+{{ define "main" }}
+<div class="container exhibition">
+  <header class="exhibition__masthead">
+    {{ partial "breadcrumb.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p class="exhibition__lede">{{ . }}</p>{{ end }}
+    {{ .Content }}
+  </header>
+  {{- $all := .Pages.ByDate.Reverse -}}
+  {{- if $all }}
+    {{- $current := index $all 0 -}}
+    {{- with $current }}
+    <section class="exhibition__now" aria-labelledby="now-label">
+      <p class="wall-label" id="now-label">Latest{{ with .Params.piece_kind }} · {{ . }}{{ end }} · {{ .Date.Format "January 2006" }}</p>
+      <a class="now-card" href="{{ .RelPermalink }}">
+        <h2 class="now-card__title">{{ .Title }}</h2>
+        {{ with .Params.author }}<p class="now-card__by">By {{ . }}{{ with $current.Params.author_role }} · {{ . }}{{ end }}</p>{{ end }}
+        {{ with .Params.description }}<p class="now-card__desc">{{ . }}</p>{{ end }}
+        <span class="now-card__cta">Read the article &rarr;</span>
+      </a>
+    </section>
+    {{- end }}
+    {{- if gt (len $all) 1 }}
+    <section class="latest" aria-labelledby="prev-label">
+      <p class="section-head" id="prev-label">Previously</p>
+      <ul class="latest__list">
+        {{- range after 1 $all -}}
+        <li class="latest__row latest__row--auth">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time>
+          <span class="latest__type">{{ with .Params.piece_kind }}{{ . }}{{ else }}Article{{ end }}</span>
+          <a class="latest__title" href="{{ .RelPermalink }}">{{ .Title }}{{ with .Params.author }} <span class="latest__by">· {{ . }}</span>{{ end }}</a>
+        </li>
+        {{- end -}}
+      </ul>
+    </section>
+    {{- end }}
+  {{- else }}
+    <p class="empty-state">No perspectives yet.</p>
+  {{- end }}
+</div>
+{{ end }}

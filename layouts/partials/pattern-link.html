@@ -1,0 +1,13 @@
+{{- /* Auto-links pattern ids (VF-Pn) in rendered HTML to their permalink pages —
+       the pmid-link mechanism, applied to the site's own pattern register.
+       Data-driven from patterns.json so only real ids link; \b stops VF-P1
+       matching inside VF-P11; lowercase hrefs never re-match (case-sensitive).
+       Context: an HTML string (chain after pmid-link.html). */ -}}
+{{- $html := printf "%s" . -}}
+{{- with site.Data.patterns -}}
+{{- range .patterns -}}
+{{- $link := printf `<a class="pat-ref" href="/patterns/%s/">%s</a>` (.id | lower) .id -}}
+{{- $html = replaceRE (printf `%s\b` .id) $link $html -}}
+{{- end -}}
+{{- end -}}
+{{- $html | safeHTML -}}

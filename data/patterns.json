@@ -1,0 +1,279 @@
+{
+ "generated": "2026-07-11",
+ "source": "Monthly Review",
+ "intelligence_window": "",
+ "patterns": [
+  {
+   "id": "VF-P1",
+   "title": "Earlier specialist input → better outcomes",
+   "status": "established",
+   "confirmation_level": "Confirmed at five independent system levels: clinical, operational, planning, parliamentary, and Board governance",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "Clinical evidence (PMIDs 42100443, 41665982, 41562579, 42105048, 41911440, 42237014, 40260522, 41996930); operational (PRN02404; BSAC 2026 GPRs); planning (NHS operational planning 10% non-elective reduction mandate); parliamentary (PAC frailty inquiry); NHS England Board governance (Board Item 8, 4 June 2026)."
+    },
+    {
+     "date": "2026-07",
+     "status": "established",
+     "note": "First boundary test published: the HERO trial (740 participants, 15 UK sites) found extended therapist-delivered home exercise AFTER discharge — input extended later, downstream of the acute episode — produced no quality-of-life benefit at 12 months despite high-fidelity delivery. Read as the pattern's boundary, not a contradiction: earlier specialist input is the claim; more input later is what HERO fails to support. The pattern's scope is correspondingly narrowed to timing, not volume, of specialist input.",
+     "references": [
+      {
+       "pmid": "41557460"
+      }
+     ],
+     "supporting": [
+      "2026-07-05-hero-extended-rehabilitation-frailty"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P2",
+   "title": "Information infrastructure as clinical necessity",
+   "status": "established",
+   "confirmation_level": "Confirmed and qualified — SPR legislation, NHS operational planning, and NHS England Board Item 8 aligned; internal tension identified",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "SPR legislation, NHS operational planning, NHS England Board Item 8 aligned. PAC found NHS England digital access priorities displaced frailty work. GP collective action on voluntary data-sharing unresolved."
+    }
+   ]
+  },
+  {
+   "id": "VF-P3",
+   "title": "Community settings structurally underequipped",
+   "status": "established",
+   "confirmation_level": "Further confirmed — corroborated at policy level this period by a national community-services waiting-time target and a national corridor-care monitoring dataset",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "National scale: PAC data (17% vs 100% GP frailty assessment; 32 of 106 areas assessed fewer than 10% of patients aged 65+). OPAT preservation (PMID 41301668: frailty index stable, cognition improved 8.5%); clinical psychology (PMID 41681059: hospitalisation normalised within 2 years); palliative care (PMID 42072943: 89% preferred place of death with team continuity and family carer support). Preservation function currently unmeasured and uncommissioned."
+    },
+    {
+     "date": "2026-07",
+     "status": "established",
+     "note": "A community palliative care triage-tool audit, a qualitative account of community nursing's unrecognised injectable-medication workload, and a new research protocol targeting deprivation-linked palliative access inequity all located the binding constraint in workforce and system design rather than treatment availability. Corroborated at policy level: a new government community-services waiting-time target (80% within 18 weeks by 2028–29), and a national dataset now tracking, daily, patients held in clinically inappropriate acute settings for want of upstream community capacity."
+    }
+   ]
+  },
+  {
+   "id": "VF-P4",
+   "title": "Acute-designed shortcuts carry material risk in community settings",
+   "status": "established",
+   "confirmation_level": "Confirmed — three independent clinical domains: vital signs scoring, antimicrobial selection, VTE risk assessment in community settings",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D01",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "NEWS2 AUC 0.55 in OPAT setting (PMID 42048369); ceftriaxone OR 3.33 for 30-day mortality in MSSA-BSI vs antistaphylococcal penicillins (11 studies, n=2,568; PMID 42112603); TROMBODOM VTE risk overestimation in Hospital at Home (46–75% vs actual 1.2% incidence; PMID 42002440). No new evidence in June 2026 invocation."
+    }
+   ]
+  },
+  {
+   "id": "VF-P5",
+   "title": "Sarcopenia as measurable treatable driver of frailty decline",
+   "status": "established",
+   "confirmation_level": "Confirmed — network meta-analysis evidence; remote delivery identified as optimal modality",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D01",
+    "D04"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "Network meta-analysis (115 RCTs, n=10,967; PMID 41996930): remote delivery optimal for lean mass and physical performance; multimodal exercise plus nutrition is evidence-based protocol. Adjacent: perioperative prehabilitation (PMID 41518969; 10 RCTs; RR 0.72 for postoperative complications; high certainty)."
+    }
+   ]
+  },
+  {
+   "id": "VF-P6",
+   "title": "Converging mandates for community AHP investment",
+   "status": "established",
+   "confirmation_level": "Confirmed — seven independent institutional authorities",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D04"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "Seven independent institutional authorities: parliamentary committee; CSP; GIRFT (£3.225m); NHS operational planning framework; RCOT CCDs; RCOT Care Act 2026 guidance update (2026 version supersedes 2016 guidance; statutory framework for OT practice in NHS and local authority settings). OT named essential in NHS England community service specifications."
+    }
+   ]
+  },
+  {
+   "id": "VF-P7",
+   "title": "Mandate-capacity tension",
+   "status": "established",
+   "confirmation_level": "Moved from a general risk to a named, specific allocation gap — a national training-post commitment landed alongside anticipated staffing reductions, continuing-care eligibility erosion, and a named specialty supply-pipeline constraint, with the allocation mechanism itself still unconstituted",
+   "first_appeared": "2026-06",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-06",
+     "status": "established",
+     "note": "PAC: 50% budget cuts to local health planning bodies; NHS Alliance: 57% anticipating staffing reductions; King's Fund: Continuing Healthcare eligibility declined from 31% to 17% since 2017 against unchanged criteria; active patient transport cuts confirmed. BGS geriatric medicine training report (4 June 2026): first supply-side constraint on the CGA delivery mechanism named in this series."
+    },
+    {
+     "date": "2026-07",
+     "status": "established",
+     "note": "A resident doctors dispute resolved, committing 4,000–4,500 additional specialty training posts over three years. In the same window: a national survey found 57% of NHS organisations anticipating clinical staffing reductions in 2026/27; a professional body's training report named a supply-side constraint on the geriatric medicine pipeline specifically. Three weeks after acceptance, the distribution mechanism deciding allocation remains unconstituted, with no published criteria."
+    }
+   ]
+  },
+  {
+   "id": "VF-P8",
+   "title": "Structured identification and coding outperform usual identification practice",
+   "status": "provisional",
+   "confirmation_level": "Observed independently in acute frailty, palliative care and clinical psychology in one reporting week; single-site and pilot designs — awaits cross-period confirmation",
+   "first_appeared": "2026-07",
+   "domains": [
+    "D01",
+    "D02",
+    "D03"
+   ],
+   "history": [
+    {
+     "date": "2026-07",
+     "status": "provisional",
+     "note": "A length-of-stay prediction tool outperformed standard frailty/functional scales in a single-cohort comparison (acute frailty); structured coding was associated with fourfold higher advance care plan completion and more deaths outside hospital than absent coding (palliative care); systematic depression/anxiety screening nearly tripled psychiatric diagnosis detection versus clinician-initiated referral alone (clinical psychology). Three domains, three independent evidence streams, one structural finding in the same reporting week. Caveats carried from the sources: the frailty leg is a single retrospective cohort (n=201) whose authors require multi-centre validation; the palliative leg is a single-site retrospective service evaluation (n=216); the psychology leg is a quasi-experimental pilot whose diagnostic-confirmation difference did not reach statistical significance — the detection gain stands, the confirmation rate awaits randomised testing.",
+     "references": [
+      {
+       "pmid": "42126267"
+      },
+      {
+       "pmid": "41130666"
+      },
+      {
+       "pmid": "42298512"
+      }
+     ],
+     "supporting": [
+      "2026-07-03-week-ending-3-july"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P9",
+   "title": "Process and regulatory simplification as a capacity-recovery lever distinct from headcount expansion",
+   "status": "provisional",
+   "confirmation_level": "Treated as a pattern rather than a single signal because it spans two structurally distinct mechanisms converging on the same claim",
+   "first_appeared": "2026-07",
+   "domains": [
+    "D01",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-07",
+     "status": "provisional",
+     "note": "Two signals converge without being connected in any source: abolition of a long-standing legal test for deprivation-of-liberty assessment (freeing assessor/clinical time), and continuing evidence that antimicrobial stewardship and oral-switch protocols recover clinician and bed-day capacity without new headcount.",
+     "supporting": [
+      "2026-06-19-opat-oral-switch-antimicrobial-stewardship",
+      "2026-07-10-extended-interval-dosing-opat-three-visits"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P10",
+   "title": "Identification-tooling as a capacity substitute",
+   "status": "provisional",
+   "confirmation_level": "The publication's own analytical convergence of VF-P8 and the workforce mandate-capacity evidence (VF-Synthesis); stated directly by no single source — awaits external corroboration",
+   "first_appeared": "2026-07",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-07",
+     "status": "provisional",
+     "note": "When specialist time is the scarce resource, coding, screening and triage tools function as a capacity multiplier by allowing non-specialist staff to correctly route patients to the specialists who remain — but only if identification triggers continuous specialist relationship rather than becoming a documentation end-point in itself.",
+     "supporting": [
+      "2026-07-workforce-training-posts-unresolved-allocation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P11",
+   "title": "Process-simplification-as-capacity-lever meets the international benchmark",
+   "status": "provisional",
+   "confirmation_level": "UK process-simplification evidence read against international standing-capacity-planning governance (VF-Synthesis); the international leg is cited, the convergence is the publication's own",
+   "first_appeared": "2026-07",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-07",
+     "status": "provisional",
+     "note": "Several of the best-performing comparator systems treat workforce capacity as a function of how demand and process are structured, not solely of headcount — visible in this month's UK evidence (deprivation-of-liberty reform; stewardship-driven capacity recovery) and in international evidence (a comparator system's independent, standing capacity-planning function, which models demand rather than responding to headline settlements). No UK source names the international parallel directly.",
+     "references": [
+      {
+       "pmid": "42113630"
+      },
+      {
+       "cite": "OECD, Health Workforce Policies in OECD Countries — Netherlands country note, 2024"
+      }
+     ],
+     "supporting": [
+      "2026-07-workforce-training-posts-unresolved-allocation"
+     ]
+    }
+   ]
+  }
+ ]
+}

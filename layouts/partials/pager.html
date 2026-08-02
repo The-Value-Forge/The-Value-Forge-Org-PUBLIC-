@@ -1,0 +1,21 @@
+{{/*
+  Pager. Context: a Paginator (e.g. .Paginator or $paginator passed in).
+  Renders only when there is more than one page. Mono / hairline, on-brand.
+  "Newer" = previous page (newest-first lists); "Older" = next page.
+*/}}
+{{- $p := . -}}
+{{- if gt $p.TotalPages 1 -}}
+<nav class="pager" aria-label="Pagination">
+  {{- if $p.HasPrev -}}
+  <a class="pager__link pager__link--prev" href="{{ $p.Prev.URL }}" rel="prev">&larr; Newer</a>
+  {{- else -}}
+  <span class="pager__link pager__link--prev is-disabled" aria-hidden="true">&larr; Newer</span>
+  {{- end -}}
+  <span class="pager__status">Page {{ $p.PageNumber }} of {{ $p.TotalPages }}</span>
+  {{- if $p.HasNext -}}
+  <a class="pager__link pager__link--next" href="{{ $p.Next.URL }}" rel="next">Older &rarr;</a>
+  {{- else -}}
+  <span class="pager__link pager__link--next is-disabled" aria-hidden="true">Older &rarr;</span>
+  {{- end -}}
+</nav>
+{{- end -}}

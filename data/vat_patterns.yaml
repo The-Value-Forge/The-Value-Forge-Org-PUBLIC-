@@ -1,0 +1,14 @@
+# Editorial designation: which patterns are VAT-consequential.
+#
+# The front-page pattern strip renders in the gold VAT treatment ONLY when the
+# pinned/top pattern's id appears in this list — gold stays VAT-only, and the
+# designation is an editorial decision made here, per pattern, by the editor.
+#
+# This file is repo-owned (hand-edited). It deliberately does NOT live in
+# data/patterns.json, which is pipeline-owned and must never be hand-edited.
+#
+# VF-P1 seeded 5 Jul 2026: "Earlier specialist input → better outcomes" is a
+# value-added-time statement (earlier input converts waiting into value-added
+# patient time). Remove or add ids as the editorial judgement changes.
+ids:
+  - VF-P1

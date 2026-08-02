@@ -1,0 +1,22 @@
+{{/* Content adapter: one permalink page per pattern (/patterns/vf-p1/…),
+     generated at build time from data/patterns.json — the pipeline stays the
+     single writer; no hand-maintained content files. Design:
+     docs/PATTERNS-LONGITUDINAL-DESIGN-2026-07.md §4. */}}
+{{ $data := .Site.Data.patterns }}
+{{ with $data }}
+{{ range .patterns }}
+{{ $page := dict
+  "kind" "page"
+  "path" (.id | lower)
+  "title" .title
+  "params" (dict
+    "pattern" .
+    "pattern_generated" $data.generated
+    "domains" .domains
+    "description" (.confirmation_level | default "")
+  )
+  "content" (dict "mediaType" "text/markdown" "value" "")
+}}
+{{ $.AddPage $page }}
+{{ end }}
+{{ end }}

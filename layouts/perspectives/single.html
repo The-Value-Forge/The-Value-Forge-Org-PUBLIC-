@@ -1,0 +1,28 @@
+{{ define "main" }}
+{{- $slug := "" -}}{{- with .File -}}{{- $slug = .ContentBaseName -}}{{- else -}}{{- $slug = .Title | urlize -}}{{- end -}}
+<div class="container">
+  <article class="content-body perspective" data-pagefind-body data-slug="{{ $slug }}" data-readtime="{{ .ReadingTime }}">
+    {{- if not .Date.IsZero -}}<span data-pagefind-filter="Type:Perspectives"></span>{{- end }}
+    {{ with .Parent }}<a class="back-link" href="{{ .RelPermalink }}" data-back><svg class="back-link__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span data-back-label>Back to {{ .Title }}</span></a>{{ end }}
+    <header class="content-header">
+      {{ partial "breadcrumb.html" . }}
+      <p class="eyebrow persp-eyebrow">Perspectives{{ with .Params.piece_kind }} · {{ . }}{{ end }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.author }}
+        <p class="persp-byline">By {{ . }}{{ with $.Params.author_role }} <span class="persp-byline__role">· {{ . }}</span>{{ end }}</p>
+      {{ end }}
+      {{ if not .Date.IsZero }}
+        <time class="content-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+      {{ end }}
+      {{ with .Description }}<p class="ed-standfirst">{{ . }}</p>{{ end }}
+    </header>
+    <div class="content-text">
+      {{ partial "pmid-link.html" .Content }}
+    </div>
+    {{ partial "sources.html" . }}
+    {{ partial "download.html" . }}
+  </article>
+</div>
+{{- $cardsjs := resources.Get "js/cards.js" | resources.Minify | resources.Fingerprint -}}
+<script src="{{ $cardsjs.RelPermalink }}" integrity="{{ $cardsjs.Data.Integrity }}" defer></script>
+{{ end }}

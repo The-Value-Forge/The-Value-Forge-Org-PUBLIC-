@@ -1,0 +1,183 @@
+{{/* The site's reader key — embedded on /method/. Every section here documents
+     furniture the site ACTUALLY renders (mastheads, badges, VAT callouts, the
+     pattern register); nothing is carried over from the internal Monthly
+     document's own front-matter key. If a component changes, change this key. */}}
+
+      <!-- VAT: the single gold moment on the page -->
+      <div class="rk-section">
+        <div class="rk-section-label">
+          <span class="q-eyebrow">Value added time &mdash; the central lens</span>
+          <div class="q-rule"></div>
+        </div>
+        <div class="rk-vat">
+          <div class="rk-vat-def">
+            <strong>Value added time (VAT)</strong> is time within the health system that demonstrably
+            improves or preserves a patient&rsquo;s functional capacity, quality of life or clinical
+            outcome &mdash; as distinct from time spent waiting, in unnecessary admission, or
+            serving institutional convenience rather than the person receiving care.
+          </div>
+          <div class="rk-vat-note">Value added time is not a metric; it is the evaluative frame. Every piece of intelligence here is filtered through one question: does this add genuine value to patient time? On this site, <strong>gold marks VAT significance and nothing else</strong>: the gold VAT&nbsp;Signal callout inside an article names its single most consequential VAT implication, and the front page&rsquo;s pattern strip turns gold only when a pattern is editorially designated VAT&#8209;consequential. Gold is never decoration &mdash; its rarity is its meaning.</div>
+        </div>
+      </div>
+
+      <!-- The five domains -->
+      <div class="rk-section">
+        <div class="rk-section-label">
+          <span class="q-eyebrow">The five domains</span>
+          <div class="q-rule"></div>
+        </div>
+        <div class="rk-domains">
+          <div class="rk-domain"><div class="rk-domain-id">D01</div><div class="rk-domain-name">Acute Frailty</div><div class="rk-domain-q">When and how does specialist frailty input change outcomes?</div></div>
+          <div class="rk-domain"><div class="rk-domain-id">D02</div><div class="rk-domain-name">Clinical Psychology</div><div class="rk-domain-q">What is the relationship between psychological care and physical health trajectories?</div></div>
+          <div class="rk-domain"><div class="rk-domain-id">D03</div><div class="rk-domain-name">Palliative Care</div><div class="rk-domain-q">How does community palliative care affect place of death, hospitalisation, and carer outcomes?</div></div>
+          <div class="rk-domain"><div class="rk-domain-id">D04</div><div class="rk-domain-name">Therapies &amp; AHPs</div><div class="rk-domain-q">What is the timing and sequencing evidence for AHP input across the pathway?</div></div>
+          <div class="rk-domain"><div class="rk-domain-id">D05</div><div class="rk-domain-name">OPAT</div><div class="rk-domain-q">What are the safety signals, preservation effects, and MDT requirements for community IV therapy?</div></div>
+        </div>
+        <p class="rk-prose rk-prose--push">
+          These domains are not separate bulletins. They are five perspectives on the same question &mdash; where does NHS practice stand against world best practice? &mdash; and the most consequential insights emerge at their intersections, not within any single domain alone. Every article names its domain span in the line above its title, and the domain pages collect each lens in one place.
+        </p>
+      </div>
+
+      <!-- The three artefacts — what you are actually reading -->
+      <div class="rk-section">
+        <div class="rk-section-label">
+          <span class="q-eyebrow">The three artefacts &mdash; what you are reading</span>
+          <div class="q-rule"></div>
+        </div>
+        <div class="rk-signal-grid">
+          <div class="rk-card">
+            <div class="rk-card-field">Signal</div>
+            <div class="rk-card-value">Weekly &middot; 0&ndash;n</div>
+            <div class="rk-card-desc">A single evidence item with national significance &mdash; published only when it clears an evidence-weight bar, so the weekly count floats with what the evidence earns. Each carries its evidence label, finding status and domain span in the masthead, and a full reference list beneath the text; PMIDs link straight to the record.</div>
+          </div>
+          <div class="rk-card">
+            <div class="rk-card-field">Synthesis</div>
+            <div class="rk-card-value">Weekly &middot; 1</div>
+            <div class="rk-card-desc">The week&rsquo;s evidence read across all five domains: cross&#8209;domain connections made explicit, unresolved threads carried as named open questions, contrary signals kept. The analytical core of the publication.</div>
+          </div>
+          <div class="rk-card">
+            <div class="rk-card-field">Monthly</div>
+            <div class="rk-card-value">Monthly &middot; flagship</div>
+            <div class="rk-card-desc">The deep cross&#8209;domain review: domain&#8209;by&#8209;domain assessment, pattern movements, absence detection, and the international benchmark. Edition&#8209;dated, featured on the landing page, and the place where the pattern register is confirmed, updated or revised.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence status -->
+      <div class="rk-section">
+        <div class="rk-section-label">
+          <span class="q-eyebrow">Evidence status &mdash; how strongly to hold a finding</span>
+          <div class="q-rule"></div>
+        </div>
+        <table class="rk-table">
+          <thead>
+            <tr>
+              <th style="width:130px">Status</th>
+              <th>What it means</th>
+              <th class="rk-right" style="width:150px">Typical basis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="q-pill q-pill--teal">Established</span></td>
+              <td>
+                <div class="rk-ev-label">Consistent across multiple high&#8209;quality studies</div>
+                <div class="rk-ev-meaning">Safe to treat as a working basis for clinical and operational decisions. Not immutable &mdash; significant contrary evidence would revise it.</div>
+              </td>
+              <td class="rk-right"><span class="rk-basis">Meta&#8209;analysis<br>Systematic review</span></td>
+            </tr>
+            <tr>
+              <td><span class="q-pill q-pill--gold">Provisional</span></td>
+              <td>
+                <div class="rk-ev-label">Promising but not yet replicated at scale</div>
+                <div class="rk-ev-meaning">Directionally informative. Useful for shaping questions and pilots; premature as the sole basis for service redesign.</div>
+              </td>
+              <td class="rk-right"><span class="rk-basis">Single RCT<br>Cohort study</span></td>
+            </tr>
+            <tr>
+              <td><span class="q-pill q-pill--red">Contested</span></td>
+              <td>
+                <div class="rk-ev-label">Active disagreement in the literature</div>
+                <div class="rk-ev-meaning">Named here because it is being acted on in practice, not because it is settled. Decisions resting on contested evidence carry identifiable risk.</div>
+              </td>
+              <td class="rk-right"><span class="rk-basis">Conflicting<br>primary studies</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Finding status -->
+      <div class="rk-section">
+        <div class="rk-section-label">
+          <span class="q-eyebrow">Finding status &mdash; the pills on signals and syntheses</span>
+          <div class="q-rule"></div>
+        </div>
+        <table class="rk-table">
+          <thead>
+            <tr>
+              <th style="width:130px">Marker</th>
+              <th>What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="q-pill q-pill--teal">NEW</span></td>
+              <td>
+                <div class="rk-ev-label">First appearance in this publication</div>
+                <div class="rk-ev-meaning">Not tracked before, or newly significant nationally.</div>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="q-pill q-pill--teal">CONFIRMED</span></td>
+              <td>
+                <div class="rk-ev-label">Prior finding reinforced by new evidence</div>
+                <div class="rk-ev-meaning">The position held previously now has additional support.</div>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="q-pill q-pill--gold">UPDATED</span></td>
+              <td>
+                <div class="rk-ev-label">Prior finding revised &mdash; direction or magnitude has changed</div>
+                <div class="rk-ev-meaning">Read the current entry, not the previous one. The update is the finding.</div>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="q-pill q-pill--neutral">DISCARDED</span></td>
+              <td>
+                <div class="rk-ev-label">No longer supported by the evidence base</div>
+                <div class="rk-ev-meaning">Named explicitly so that decisions built on it can be revisited.</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="rk-prose rk-prose--push">These pills appear on the article masthead and on every card and list row. The front page&rsquo;s briefing strip adds a trend marker (Rising, Emerging) for the direction a signal is moving.</p>
+      </div>
+
+      <!-- The pattern register — the longitudinal spine -->
+      <div class="rk-section">
+        <div class="rk-section-label">
+          <span class="q-eyebrow">The pattern register &mdash; the longitudinal spine</span>
+          <div class="q-rule"></div>
+        </div>
+        <p class="rk-prose">
+          Patterns are recurrent findings that hold across domains and across editions &mdash; the most consequential intelligence the publication produces, invisible if you read any single article in isolation. Each carries a permanent id (VF&#8209;P1, VF&#8209;P2 &hellip;), a status, and a dated history with the references that earned every entry. Patterns enter the register as <em>provisional</em> and are promoted to <em>established</em> only by repeated observation from independent evidence; evidence that narrows or contradicts a pattern is published against it &mdash; <em>qualified</em>, <em>contested</em>, or <em>discarded</em> &mdash; and nothing is ever quietly rewritten.
+        </p>
+        <div class="rk-pattern">
+          <div class="rk-pat-head">
+            <span class="rk-pat-n">VF&#8209;P1</span>
+            <span class="rk-pat-title">Earlier specialist clinical input generates materially better outcomes, lower cost and more value&#8209;added patient time</span>
+            <span class="rk-pat-status rk-pat-status--teal">Established</span>
+          </div>
+          <div class="rk-pat-body">
+            Every pattern id in an article links to that pattern&rsquo;s own page, which carries its full dated history, its evidence, and every article that bears on it. The register page holds the current state of all patterns; the evidence timeline shows how they have moved.
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="rk-foot">
+        <span class="rk-foot-lead">Evidence labels used throughout:</span>
+        [Meta&#8209;analysis] &middot; [Primary Study] &middot; [Guidance] &middot; [Audit/Data] &middot; [Synthesis] &middot; [Preprint] &middot; [Unverified]
+        <br>
+        These appear inline and as badges wherever the type of evidence materially affects how strongly a finding should be held. A [Primary Study] and a [Meta&#8209;analysis] warrant different levels of confidence. DISCARDED findings stay named so that decisions built on them can be revisited &mdash; the site&rsquo;s public revision history is the audit trail.
+      </div>

@@ -1,0 +1,12 @@
+{{/*
+  Reusable infinity progress glyph — the brand ∞ mark, drawable.
+  pathLength="100" normalises the path so JS can set stroke-dashoffset = 100*(1-progress).
+  Same continuous one-stroke path as the active-nav mark (60x30 viewBox), centre crossing.
+  Optional dict: { "class": "<extra classes>", "label": "<aria label>" }.
+*/}}
+{{- $cls := "" -}}{{- $label := "reading progress" -}}
+{{- if reflect.IsMap . -}}{{- $cls = .class -}}{{- with .label -}}{{- $label = . -}}{{- end -}}{{- end -}}
+<svg class="read-mark {{ $cls }}" viewBox="0 0 60 30" role="img" aria-label="{{ $label }}" focusable="false">
+  <path class="read-mark__track" d="M30 15C26 8 22 3.5 15 3.5C7 3.5 2.5 8.5 2.5 15C2.5 21.5 7 26.5 15 26.5C22 26.5 26 22 30 15C34 8 38 3.5 45 3.5C53 3.5 57.5 8.5 57.5 15C57.5 21.5 53 26.5 45 26.5C38 26.5 34 22 30 15Z" fill="none" stroke-width="1.5" stroke-linecap="round"/>
+  <path class="read-mark__fill" pathLength="100" d="M30 15C26 8 22 3.5 15 3.5C7 3.5 2.5 8.5 2.5 15C2.5 21.5 7 26.5 15 26.5C22 26.5 26 22 30 15C34 8 38 3.5 45 3.5C53 3.5 57.5 8.5 57.5 15C57.5 21.5 53 26.5 45 26.5C38 26.5 34 22 30 15Z" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="100" stroke-dashoffset="100"/>
+</svg>

@@ -1,0 +1,42 @@
+/* =====================================================================
+   THE VALUE FORGE — canonical design tokens
+   v1 — June 2026. Single source of truth for the WEBSITE.
+
+   These values match what the live site already ships
+   (per TVF-WEBSITE-design-principles-v1.md and the 6 Jun
+   Claude Code correction). Do not fork them. If a value must
+   change, change it HERE and let the site consume it.
+   ===================================================================== */
+
+:root {
+  /* — Ink (primary neutrals; never pure black, never NHS blue) — */
+  --vf-ink:        #1B2D3A;   /* primary text, borders, inverted card bg */
+  --vf-ink-mid:    #3D5466;   /* standfirst, secondary prose */
+  --vf-ink-muted:  #6B7F8E;   /* labels, dates, metadata, footer */
+
+  /* — Surface (warm paper, not white) — */
+  --vf-surface:        #F4F2EC;  /* page background */
+  --vf-surface-raised: #FFFFFF;  /* cards, elevated elements */
+
+  /* — Teal: all analytical + navigational colour — */
+  --vf-teal:        #1B8694;  /* domain ids, section labels, links */
+  --vf-teal-light:  #E1F5EE;  /* domain tags, "established" pill fill */
+  --vf-teal-dark:   #0F6E56;  /* pattern status text, deep accents */
+
+  /* — Gold: VAT callout only. Rarity is the meaning. — */
+  --vf-gold:        #B8945A;  /* VAT callout accent */
+  --vf-gold-light:  #FAF0E0;  /* VAT callout block background */
+  --vf-gold-dark:   #8B6020;  /* VAT label text */
+
+  /* — Status (sparingly; for evidence/finding pills) — */
+  --vf-contested:       #A32D2D;  /* contested evidence */
+  --vf-contested-light: #FCEBEB;
+
+  /* — Hairline — */
+  --vf-rule: rgba(27, 45, 58, 0.12);
+
+  /* — Type: three registers, each load-bearing — */
+  --vf-font-body:  -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --vf-font-head:  Georgia, "Times New Roman", serif;
+  --vf-font-mono:  "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+}
