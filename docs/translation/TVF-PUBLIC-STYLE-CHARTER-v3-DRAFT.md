@@ -58,9 +58,9 @@ the words "routine", "slot", "pipeline" never appear in public artefacts.
 Strip, without exception and without trace:
 
 1. **All local NHS organisational identifiers:** the sponsoring NHS organisation;
-   Community, Frailty and Therapies Care Group (and any "Care Group" reference);
+   the clinical grouping (and any "clinical grouping" reference);
    the city; the surrounding county; the local patch; the regional ICB;
-   the local JSNA; named local services, sites, wards, or teams; named local ICB or ICS.
+   the local needs assessment; named local services, sites, wards, or teams; named local ICB or ICS.
 2. **All personal identifiers:** the editor's name, role, employer, and anything that
    connects them to The Value Forge. No author bylines. The publication speaks.
 3. **All internal system references:** Slack channels, Drive folders, routine
@@ -273,8 +273,7 @@ observation; and a horizon scan. Markedly fuller than a weekly synthesis.
 
 ## 7. Self-check before writing (run every time, in order)
 
-1. Grep your own draft for: Humber, the city, the surrounding county, the surrounding county, the local patch,
-   the regional ICB, JSNA, Care Group, the editor, and every internal term in §2's final row.
+1. Grep your draft for every local identifier in the redaction list held with the internal routines, and every internal term in §2's final row. (The literal identifiers are deliberately not reproduced in this public copy.)
    Any hit → fix or invoke §5.
 2. Diff every evidence label, confidence level, and status against the source.
    Any mismatch → fix; if fixing breaks register, invoke §5.

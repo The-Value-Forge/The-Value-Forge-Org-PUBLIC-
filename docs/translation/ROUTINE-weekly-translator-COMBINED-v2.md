@@ -37,7 +37,7 @@ Slot numbers, routine names, channel names (#morning-brief, #strategic-log, etc.
 
 Strip without exception and without trace:
 
-1. ALL local NHS organisational identifiers: the sponsoring NHS organisation; Community, Frailty and Therapies Care Group (and any "Care Group" reference); the city; the surrounding county; the local patch; the regional ICB; the local JSNA; named local services, sites, wards, or teams; named local ICB or ICS.
+1. ALL local NHS organisational identifiers: the sponsoring NHS organisation; the clinical grouping (and any "clinical grouping" reference); the city; the surrounding county; the local patch; the regional ICB; the local needs assessment; named local services, sites, wards, or teams; named local ICB or ICS.
 2. ALL personal identifiers: no author bylines. The publication speaks.
 3. ALL internal system references: Slack channels, Drive folders, routine schedules, memory systems, session records.
 
@@ -115,7 +115,7 @@ PATTERNS.JSON: full-file replacement. Schema:
 
 ### 7. Self-check (run before writing, in order)
 
-1. Grep your draft for: Humber, the city, the surrounding county, the surrounding county, the local patch, the regional ICB, JSNA, Care Group, and every internal term in §2. Any hit → fix or invoke §5.
+1. Grep your draft for every local identifier in the redaction list held with the internal routines, and every internal term in §2. Any hit → fix or invoke §5.
 2. Diff every evidence label, confidence level, and status against the source. Any mismatch → fix; if fixing breaks register, invoke §5.
 3. Confirm every frontmatter field against §6 schemas.
 4. Confirm no displayed fact was composed rather than carried from source.

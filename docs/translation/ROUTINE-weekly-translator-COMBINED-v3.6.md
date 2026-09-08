@@ -73,15 +73,14 @@ Strip without exception and without trace from public artefacts:
 
 1. All local NHS organisational identifiers, including:
  - the sponsoring NHS organisation
- - Community, Frailty and Therapies Care Group
- - any "Care Group" reference
+ - the clinical grouping
+ - any "clinical grouping" reference
  - the city
- - the surrounding county
  - the surrounding county
  - the local patch
  - the regional ICB
  - the wider region
- - the local JSNA
+ - the local needs assessment
  - named local services, sites, wards, teams, local ICBs, or local ICS references
 
 2. All personal identifiers:
@@ -383,16 +382,12 @@ Run these checks against every draft, in order.
 
 Search the draft for:
 
-- Humber
+- every local identifier in the redaction list held with the internal routines
 - the city
-- the surrounding county
 - the surrounding county
 - the local patch
 - the regional ICB
-- JSNA
-- Care Group
 - the sponsoring NHS organisation
-- Community, Frailty and Therapies Care Group
 - named local services
 - named local sites
 - named local wards
@@ -409,6 +404,7 @@ Search the draft for:
 - session
 - channel names
 - internal file architecture
+  (the literal identifiers are deliberately not reproduced in this public copy)
 
 Any hit in a public artefact means fix it or invoke the degrade-loudly rule.
 
