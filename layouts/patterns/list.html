@@ -16,7 +16,7 @@
     <article class="patreg-item" id="{{ .id | lower }}">
       <div class="patreg-head">
         <span class="patreg-id">{{ .id }}</span>
-        <span class="pat-level{{ if eq .status "provisional" }} pat-level--prov{{ end }}">{{ .status | title }}</span>
+        <span class="pat-level{{ if ne .status "established" }} pat-level--{{ .status }}{{ end }}">{{ .status | title }}</span>
         {{- /* first_appeared is in the translator schema but the live pipeline has
                omitted it; fall back to the earliest history entry's date. */ -}}
         {{- $since := .first_appeared -}}

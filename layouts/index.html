@@ -1,5 +1,8 @@
 {{ define "main" }}
 
+{{/* ─── 00 Onboarding strip — first thing on the page ───────── */}}
+{{ partial "onboarding-strip.html" . }}
+
 {{/* ─── 01 Hero ──────────────────────────────────────────── */}}
 <div class="heroband">
   <div class="container hero">
@@ -84,9 +87,6 @@
 
   </div>
 </div>
-
-{{/* ─── 01b Onboarding strip — wayfinding for first-time readers ────── */}}
-{{ partial "onboarding-strip.html" . }}
 
 {{/* ─── 02 Pattern strip ─────────────────────────────────── */}}
 {{- $patterns := .Site.Data.patterns.patterns -}}
@@ -187,7 +187,7 @@
             <div class="domchips">
               {{- range $i, $d := .domains }}{{ if $i }}<i>·</i>{{ end }}{{ $d }}{{ end -}}
             </div>
-            <span class="pat-level{{ if eq .status "provisional" }} pat-level--prov{{ end }}">{{ .id }} · {{ .status | title }}</span>
+            <span class="pat-level{{ if ne .status "established" }} pat-level--{{ .status }}{{ end }}">{{ .id }} · {{ .status | title }}</span>
           </div>
         </article>
         {{- end }}

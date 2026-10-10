@@ -1,7 +1,7 @@
 ---
 title: "Extended home exercise after acute admission does not improve quality of life in older people with frailty, HERO trial finds"
 date: 2026-07-05
-domains: ["Acute Frailty", "Therapies & AHPs"]
+domains: ["Frailty", "Therapies & AHPs"]
 domain: ["d01", "d04"]
 evidence_label: ["Primary Study"]
 finding_status: ["NEW"]

@@ -75,7 +75,7 @@ All pills: `font: --vf-font-mono; font-size: 11px; letter-spacing: 0.04em; paddi
 
 `D01 Acute Frailty` · `D02 Clinical Psychology` · `D03 Palliative Care` · `D04 Therapies & AHPs` · `D05 OPAT`
 
-Five perspectives on one population (the city and its surrounding county); the key insights live at their intersections.
+Five perspectives on one population (the city & the surrounding county); the key insights live at their intersections.
 
 ---
 

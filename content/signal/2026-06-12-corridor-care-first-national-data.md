@@ -30,7 +30,7 @@ sources:
     detail: "May 2026"
     pmid: ""
     doi: ""
-    url: ""
+    url: "https://www.england.nhs.uk/long-read/best-practice-guide-for-nhs-frailty-pathways/"
 ---
 
 On 11 June 2026, NHS England published its first monthly corridor care dataset, drawn from urgent and emergency care daily situation reports. For May 2026, the data recorded an average of 2,940 patients per day receiving care in clinically inappropriate settings — a figure covering patients in corridors, waiting rooms, and other non-designated clinical areas across NHS acute trusts in England. This is the first time this volume has been reported at a national, publicly accessible level.

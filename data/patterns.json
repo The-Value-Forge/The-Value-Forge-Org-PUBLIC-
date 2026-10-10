@@ -1,7 +1,7 @@
 {
- "generated": "2026-07-11",
+ "generated": "2026-10-10",
  "source": "Monthly Review",
- "intelligence_window": "",
+ "intelligence_window": "2026-10",
  "patterns": [
   {
    "id": "VF-P1",
@@ -41,7 +41,7 @@
    "id": "VF-P2",
    "title": "Information infrastructure as clinical necessity",
    "status": "established",
-   "confirmation_level": "Confirmed and qualified — SPR legislation, NHS operational planning, and NHS England Board Item 8 aligned; internal tension identified",
+   "confirmation_level": "Confirmed at the level of association; neither new source tests necessity as distinct from usefulness",
    "first_appeared": "2026-06",
    "domains": [
     "D01",
@@ -55,6 +55,23 @@
      "date": "2026-06",
      "status": "established",
      "note": "SPR legislation, NHS operational planning, NHS England Board Item 8 aligned. PAC found NHS England digital access priorities displaced frailty work. GP collective action on voluntary data-sharing unresolved."
+    },
+    {
+     "date": "2026-10",
+     "status": "established",
+     "note": "Confirmed at the level of association. Earlier entry of a medically-ready-for-discharge date was associated with fewer unnecessary bed days (112,930 visits, observational), and a digital assessment trigger reached 71% assessment within four days. Neither source tests necessity as distinct from usefulness. Disconfirmation condition: a comparable system shown to deliver equivalent outcomes without the infrastructure.",
+     "references": [
+      {
+       "pmid": "42464290"
+      },
+      {
+       "pmid": "42763222"
+      }
+     ],
+     "supporting": [
+      "2026-10-02-medically-ready-discharge-date-unnecessary-bed-days",
+      "2026-10-02-week-ending-2-october"
+     ]
     }
    ]
   },
@@ -62,7 +79,7 @@
    "id": "VF-P3",
    "title": "Community settings structurally underequipped",
    "status": "established",
-   "confirmation_level": "Further confirmed — corroborated at policy level this period by a national community-services waiting-time target and a national corridor-care monitoring dataset",
+   "confirmation_level": "Confirmed again at service and national-audit level this cycle",
    "first_appeared": "2026-06",
    "domains": [
     "D01",
@@ -81,6 +98,32 @@
      "date": "2026-07",
      "status": "established",
      "note": "A community palliative care triage-tool audit, a qualitative account of community nursing's unrecognised injectable-medication workload, and a new research protocol targeting deprivation-linked palliative access inequity all located the binding constraint in workforce and system design rather than treatment availability. Corroborated at policy level: a new government community-services waiting-time target (80% within 18 weeks by 2028–29), and a national dataset now tracking, daily, patients held in clinically inappropriate acute settings for want of upstream community capacity."
+    },
+    {
+     "date": "2026-10",
+     "status": "established",
+     "note": "Confirmed. Three-quarters of 22 UK palliative virtual wards are charity-funded and two have closed; 29% of telehealth-eligible patients took part in an advanced-clinical-practitioner-led palliative heart-failure model; only 9 of 36 OPAT patient-education resources met quality criteria; and the National Audit Office reported a delayed-discharge cost of 2 billion pounds from August 2025 to April 2026 and an average of 2,241 patients in A&E corridors in a 24-hour snapshot in May 2026. Disconfirmation condition: a national community-capacity measure showing equipment and staffing at or above specification.",
+     "references": [
+      {
+       "cite": "May-Miller HL, Swann D. Palliative virtual wards: a cross-sectional UK survey. BMJ Supportive & Palliative Care 16(5):1221-1230. DOI 10.1136/spcare-2025-005482",
+       "url": "https://doi.org/10.1136/spcare-2025-005482"
+      },
+      {
+       "cite": "Kirkland S, Tran P, Aziz F, Banerjee P, Kuehl M. Advanced clinical practitioner-led palliative care heart failure model within the National Health Service. European Journal of Cardiovascular Nursing 25(6):1130-1142. DOI 10.1093/eurjcn/zvag058",
+       "url": "https://doi.org/10.1093/eurjcn/zvag058"
+      },
+      {
+       "pmid": "42683141"
+      },
+      {
+       "cite": "National Audit Office, Managing the flow of patients through hospital from A&E, 9 September 2026"
+      }
+     ],
+     "supporting": [
+      "2026-09-04-uk-palliative-virtual-wards-survey",
+      "2026-09-04-opat-patient-education-resource-gap",
+      "2026-09-11-nao-hospital-flow-national-audit"
+     ]
     }
    ]
   },
@@ -88,7 +131,7 @@
    "id": "VF-P4",
    "title": "Acute-designed shortcuts carry material risk in community settings",
    "status": "established",
-   "confirmation_level": "Confirmed — three independent clinical domains: vital signs scoring, antimicrobial selection, VTE risk assessment in community settings",
+   "confirmation_level": "Confirmed by a single further study this cycle",
    "first_appeared": "2026-06",
    "domains": [
     "D01",
@@ -100,14 +143,24 @@
      "date": "2026-06",
      "status": "established",
      "note": "NEWS2 AUC 0.55 in OPAT setting (PMID 42048369); ceftriaxone OR 3.33 for 30-day mortality in MSSA-BSI vs antistaphylococcal penicillins (11 studies, n=2,568; PMID 42112603); TROMBODOM VTE risk overestimation in Hospital at Home (46–75% vs actual 1.2% incidence; PMID 42002440). No new evidence in June 2026 invocation."
+    },
+    {
+     "date": "2026-10",
+     "status": "established",
+     "note": "Confirmed, single study. A wearable vital-sign monitor that performed on wards lost data at home (oxygen-saturation availability 39%, respiratory-rate availability 46%; n=45, one centre). Disconfirmation condition: a prospective home comparison showing an acute-designed score or device performing at ward-level accuracy.",
+     "references": [
+      {
+       "pmid": "42348131"
+      }
+     ]
     }
    ]
   },
   {
    "id": "VF-P5",
    "title": "Sarcopenia as measurable treatable driver of frailty decline",
-   "status": "established",
-   "confirmation_level": "Confirmed — network meta-analysis evidence; remote delivery identified as optimal modality",
+   "status": "qualified",
+   "confirmation_level": "Qualified: confirmed by network meta-analysis for strength and physical performance in sarcopenia; the claim that remote delivery is optimal is narrowed to proximal outcomes with wide intervals",
    "first_appeared": "2026-06",
    "domains": [
     "D01",
@@ -118,14 +171,37 @@
      "date": "2026-06",
      "status": "established",
      "note": "Network meta-analysis (115 RCTs, n=10,967; PMID 41996930): remote delivery optimal for lean mass and physical performance; multimodal exercise plus nutrition is evidence-based protocol. Adjacent: perioperative prehabilitation (PMID 41518969; 10 RCTs; RR 0.72 for postoperative complications; high certainty)."
+    },
+    {
+     "date": "2026-10",
+     "status": "qualified",
+     "note": "Qualified, narrowing stated. The register wording 'remote delivery identified as optimal modality' claims more than the source supports. The network meta-analysis (115 randomised trials) ranks general remote training highest for lean mass (SMD 1.35, 95% CI 0.41-2.29) and physical performance (SMD 2.39, 1.26-3.53): ranked, with very wide intervals, on proximal outcomes. The UK HERO trial (740 randomised, 24 weeks of home-based exercise) found no 12-month physical quality-of-life benefit (adjusted difference -0.22, 95% CI -1.47 to 1.03) and its authors do not recommend commissioning extended rehabilitation; frailty-targeted cardiovascular rehabilitation gained proximal function without mortality benefit at very low certainty; and home pulmonary rehabilitation fell short of the minimum clinically important difference on average. Restated: confirmed that multimodal exercise plus nutrition improves strength and physical performance in sarcopenia; remote delivery ranks highest for lean mass and physical performance with wide intervals, but remote or home delivery has not been shown to improve patient-centred outcomes. Disconfirmation condition: a head-to-head randomised trial of remote against supervised delivery showing inferiority on strength or function, or a patient-centred-outcome trial of remote multimodal exercise showing benefit (which would lift the qualification).",
+     "references": [
+      {
+       "pmid": "41996930"
+      },
+      {
+       "pmid": "41557460"
+      },
+      {
+       "pmid": "42772577"
+      },
+      {
+       "pmid": "42813303"
+      }
+     ],
+     "supporting": [
+      "2026-09-25-frailty-cardiac-rehabilitation-functional-gains-not-mortality",
+      "2026-10-02-week-ending-2-october"
+     ]
     }
    ]
   },
   {
    "id": "VF-P6",
    "title": "Converging mandates for community AHP investment",
-   "status": "established",
-   "confirmation_level": "Confirmed — seven independent institutional authorities",
+   "status": "qualified",
+   "confirmation_level": "Qualified: institutional endorsement by seven authorities is evidenced; funded investment matching those mandates is not",
    "first_appeared": "2026-06",
    "domains": [
     "D04"
@@ -135,6 +211,20 @@
      "date": "2026-06",
      "status": "established",
      "note": "Seven independent institutional authorities: parliamentary committee; CSP; GIRFT (£3.225m); NHS operational planning framework; RCOT CCDs; RCOT Care Act 2026 guidance update (2026 version supersedes 2016 guidance; statutory framework for OT practice in NHS and local authority settings). OT named essential in NHS England community service specifications."
+    },
+    {
+     "date": "2026-10",
+     "status": "qualified",
+     "note": "Qualified, narrowing stated. The title says investment; the evidence recorded is institutional endorsement by seven authorities. The one concrete national deliverable in the window, the allied health professions framework for 2027 to 2032, closed consultation on 18 September with no outcome published at 14 days (status as of 2 October 2026). No source this month evidences funded investment matching the mandates. Restated: seven independent institutional authorities mandate or endorse community AHP capacity; as of 2 October 2026 no measured funding or workforce commitment matching those mandates is evidenced, and the national framework consultation has published no outcome. Disconfirmation condition: a published, funded national AHP workforce commitment would lift the qualification; a framework that omits community AHP capacity would contest the pattern.",
+     "references": [
+      {
+       "cite": "Allied health professions framework 2027-2032: consultation closed 18 September 2026, no outcome published as of 2 October 2026 (see Society of Radiographers, Help shape the future of allied health professions in England, 11 August 2026)",
+       "url": "https://www.sor.org/news/government-nhs/help-shape-the-future-of-allied-health-professions"
+      }
+     ],
+     "supporting": [
+      "2026-09-virtual-wards-reach-versus-who-they-are-tested-on"
+     ]
     }
    ]
   },
@@ -167,8 +257,8 @@
   {
    "id": "VF-P8",
    "title": "Structured identification and coding outperform usual identification practice",
-   "status": "provisional",
-   "confirmation_level": "Observed independently in acute frailty, palliative care and clinical psychology in one reporting week; single-site and pilot designs — awaits cross-period confirmation",
+   "status": "qualified",
+   "confirmation_level": "Qualified: outperformance is evidenced at detection, case-finding and process level; evidence that it changes a patient outcome is not established",
    "first_appeared": "2026-07",
    "domains": [
     "D01",
@@ -193,6 +283,41 @@
      ],
      "supporting": [
       "2026-07-03-week-ending-3-july"
+     ]
+    },
+    {
+     "date": "2026-08",
+     "status": "established",
+     "note": "Promoted to established: this pattern has now been observed across two separate monthly cycles (July, August), with independent, verifiable evidence streams in each cycle, and no unaddressed contrary signal identified in either. This period's verifiable evidence comprises a reproducible case-finding rule identifying frequent-attender frail patients for proactive assessment, and a nationwide cohort finding that earlier specialist palliative referral in pancreatic cancer nearly halved end-of-life hospitalisation. This month's wider evidence flow (further studies in emergency-department-initiated palliative consultation, trauma-related missed diagnosis, and neurologist-led advance care planning, described in this month's Monthly review) is consistent with the pattern but is not counted toward this promotion, as no citable source for these specific studies was available to this register at the required evidential bar at time of writing.",
+     "supporting": [
+      "2026-07-31-germot-case-finding-rule-frailty",
+      "2026-07-31-early-palliative-referral-pancreatic-cancer"
+     ]
+    },
+    {
+     "date": "2026-10",
+     "status": "qualified",
+     "note": "Qualified, narrowing stated. The register wording 'no contrary signal identified' no longer holds at outcome level. A Clinical Frailty Scale and a multidimensional index predicted mortality but neither predicted readmission; a digital geriatric assessment trigger agreed only modestly with clinician-led assessment (rho 0.38); a surgical verification programme raised assessment by 4.0 percentage points; and documentation gains in goals-of-care interventions did not reliably move utilisation. Restated: structured identification and coding outperform usual identification practice at detection, case-finding and process level (assessment, documentation, coding rates); evidence that they change a patient outcome is not established, and frailty tools predict mortality but not readmission. Disconfirmation condition: a controlled evaluation in which an identification or coding intervention changes readmission, time at home or place of death against usual identification; not met this month, the advanced-clinical-practitioner-led heart-failure model being uncontrolled.",
+     "references": [
+      {
+       "pmid": "42806214"
+      },
+      {
+       "pmid": "42763222"
+      },
+      {
+       "cite": "Yap EN, Reed M, Huang J, et al. Impact of Geriatric Surgery Verification Program Implementation on Vulnerability Assessment Rates: A Multicenter Retrospective Cohort Study. Journal of the American College of Surgeons, 17 September 2026. DOI 10.1097/XCS.0000000000002207",
+       "url": "https://doi.org/10.1097/XCS.0000000000002207"
+      },
+      {
+       "cite": "Thomas TH, Chen L, Nipp RD, Schenker Y. Interventions Promoting Goals of Care Conversations in Serious Illness: A Narrative Review. Journal of Palliative Medicine, 14 September 2026. DOI 10.1177/10966218261485018",
+       "url": "https://doi.org/10.1177/10966218261485018"
+      }
+     ],
+     "supporting": [
+      "2026-09-18-geriatric-surgery-verification-program-vulnerability-assessment",
+      "2026-09-18-goals-of-care-conversations-narrative-review",
+      "2026-10-02-week-ending-2-october"
      ]
     }
    ]
@@ -222,8 +347,8 @@
   {
    "id": "VF-P10",
    "title": "Identification-tooling as a capacity substitute",
-   "status": "provisional",
-   "confirmation_level": "The publication's own analytical convergence of VF-P8 and the workforce mandate-capacity evidence (VF-Synthesis); stated directly by no single source — awaits external corroboration",
+   "status": "qualified",
+   "confirmation_level": "Qualified: a structured digital assessment agreed only modestly with clinician-led assessment; partially externally evidenced, awaiting further corroboration",
    "first_appeared": "2026-07",
    "domains": [
     "D01",
@@ -239,6 +364,27 @@
      "note": "When specialist time is the scarce resource, coding, screening and triage tools function as a capacity multiplier by allowing non-specialist staff to correctly route patients to the specialists who remain — but only if identification triggers continuous specialist relationship rather than becoming a documentation end-point in itself.",
      "supporting": [
       "2026-07-workforce-training-posts-unresolved-allocation"
+     ]
+    },
+    {
+     "date": "2026-08",
+     "status": "provisional",
+     "note": "Reconfirmed this period: a paramedic-delivered structured end-of-life conversation protocol is among the non-specialist-led protocols this month's evidence flow associates with outcome shifts of a scale usually associated with specialist input. This month's Monthly review also describes physiotherapist-delivered and neurologist-led protocols producing comparable shifts this period, but no citable source for these specific studies was available to this register at time of writing; status is therefore held at provisional pending fuller citation reconciliation, rather than promoted on partially-verified evidence.",
+     "supporting": [
+      "2026-07-24-paramedic-end-of-life-protocol-home-death"
+     ]
+    },
+    {
+     "date": "2026-10",
+     "status": "qualified",
+     "note": "Qualified. A digitally triggered, FINDNEEDS-based comprehensive geriatric assessment correlated at rho 0.38 with clinician-led assessment in a retrospective one-hospital pilot (March to November 2025), so it routes patients but is not shown to substitute for the assessment. Disconfirmation condition: validation in which structured digital assessment agrees closely with clinician-led assessment and is shown to release specialist capacity would lift the qualification.",
+     "references": [
+      {
+       "pmid": "42763222"
+      }
+     ],
+     "supporting": [
+      "2026-09-25-week-ending-25-september"
      ]
     }
    ]
@@ -271,6 +417,319 @@
      ],
      "supporting": [
       "2026-07-workforce-training-posts-unresolved-allocation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P12",
+   "title": "Digital exclusion and carer capacity are the binding constraint on who benefits from remote and home-based care models",
+   "status": "established",
+   "confirmation_level": "Confirmed again this cycle, with a stated boundary case",
+   "first_appeared": "2026-08",
+   "domains": [
+    "D01",
+    "D03"
+   ],
+   "history": [
+    {
+     "date": "2026-08",
+     "status": "provisional",
+     "note": "This publication's monthly deep-dive theme this period. The underlying observation was first described in this publication's 10 July weekly evidence coverage (four cross-country studies: housing instability and unemployment predicting psychiatric emergency re-presentation; carer education and resourcing predicting advance-care-plan completion; rural residence and lower socioeconomic status predicting 'burdensome' end-of-life care; US insurance status predicting OPAT-access-related length of stay and discharge-against-advice), but was not previously entered in this register. It enters now, on formal registration, as a new provisional pattern rather than being backdated, consistent with this register's append-only discipline. This month's evidence flow found the same mechanism recurring in narrowed form (a digital-exclusion caveat attached to nearly every remote-delivery evidence item) and in a new form (national professional guidance naming ambient voice technology's accuracy gap for diverse languages and accents as a direct equity risk, not yet linked to a citable named source at this register's evidential bar). Disconfirmation condition: a materially lower rate of structural-determinant (deprivation- or rurality-linked) findings across an equally wide domain and country spread in a subsequent monthly cycle would indicate this month's clustering was a source-selection artefact rather than a genuine pattern, and would qualify or discard it.",
+     "supporting": [
+      "2026-07-10-carer-resourcing-advance-care-planning-dementia"
+     ]
+    },
+    {
+     "date": "2026-09",
+     "status": "established",
+     "note": "Promoted to established: observed across two separate monthly cycles (August, September) with independent evidence streams in each, and no unaddressed contrary signal. This period's independent streams are a UK service evaluation of virtual wards in Cornwall (Consolidated Framework for Implementation Research), which found organisational trust and digital access -- not clinical suitability -- the binding constraint on uptake even where the technology functioned adequately, and a US research letter finding rural hospice patients receive less intensive, more unpaid-family-reliant support than urban patients. Both corroborate, independently of each other and of August's carer-resourcing evidence stream, that the populations a remote or home-based model is meant to reach most are the ones whose access and whose unpaid carers absorb the largest share of the resulting burden.",
+     "references": [
+      {
+       "pmid": "40331105"
+      }
+     ],
+     "supporting": [
+      "2026-08-28-rural-urban-hospice-disparities-us"
+     ]
+    },
+    {
+     "date": "2026-10",
+     "status": "established",
+     "note": "Confirmed, with a boundary. In a Sydney virtual hospital, carers acted as extensions or substitutes for patients with low digital literacy, language barriers or reduced mobility; nursing-home telehealth interviews reported digital-literacy gaps and 'a bridge, not a replacement'; and 29% of telehealth-eligible patients took part in an NHS-based model. Boundary case: remote-monitoring use was highest in remote and rural regions of Australia and New Zealand, but those are passively transmitting implanted devices, which do not test digital exclusion. Disconfirmation condition (tested, not triggered): a materially lower rate of structural-determinant findings across an equally wide domain and country spread; a rural uptake gain for a non-passive, patient-operated technology would qualify the pattern.",
+     "references": [
+      {
+       "pmid": "41937437"
+      },
+      {
+       "pmid": "42817853"
+      },
+      {
+       "pmid": "42447453"
+      },
+      {
+       "pmid": "41737930"
+      },
+      {
+       "cite": "Kirkland S, Tran P, Aziz F, Banerjee P, Kuehl M. Advanced clinical practitioner-led palliative care heart failure model within the National Health Service. European Journal of Cardiovascular Nursing 25(6):1130-1142. DOI 10.1093/eurjcn/zvag058",
+       "url": "https://doi.org/10.1093/eurjcn/zvag058"
+      }
+     ],
+     "supporting": [
+      "2026-09-11-virtual-hospital-carer-roles-australia",
+      "2026-09-18-canada-hospital-at-home-workshop-series",
+      "2026-10-02-week-ending-2-october"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P13",
+   "title": "Structural and measurement fidelity at the point of handover, not the underlying clinical evidence, is the binding constraint on delivered benefit",
+   "status": "provisional",
+   "confirmation_level": "Provisional: observed in two monthly cycles (September, October) with new evidence at process level only; eligible for promotion consideration on narrowed wording but not promoted this cycle",
+   "first_appeared": "2026-09",
+   "domains": [
+    "D01",
+    "D04"
+   ],
+   "history": [
+    {
+     "date": "2026-09",
+     "status": "provisional",
+     "note": "First formal register entry. A 15-model international scoping review found only 4 of 15 Hospital-at-Home admission-avoidance models used a validated frailty measure at all; a retrospective cohort of 8,113 emergency-department attendances found that embedding comprehensive geriatric assessment at first contact, rather than after an admission decision, converted 63% of encounters to home discharge with support; a UK ethnographic study found dysphagia care processes on an acute stroke ward varied by ward resourcing and staff knowledge rather than by clinical-evidence uncertainty; and this cycle's own meta-analysis of 57 cohort studies confirms frailty status independently predicts functional decline, mortality and readmission, strengthening the case that consistent measurement, not model choice, is what makes an at-risk patient visible. Tracked qualitatively across six consecutive weekly evidence issues before this register entry; entering now, on formal registration, consistent with this register's append-only discipline of not backdating prior tracking. Disconfirmation condition: a national or large-system virtual-ward or admission-avoidance specification that requires and enforces validated frailty or outcome measurement, subsequently shown to deliver benefit tracking model choice rather than measurement or coordination discipline, would qualify or discard this pattern.",
+     "references": [
+      {
+       "pmid": "42637995"
+      },
+      {
+       "pmid": "42629536"
+      },
+      {
+       "pmid": "42500843"
+      }
+     ],
+     "supporting": [
+      "2026-08-28-hospital-at-home-frailty-measurement-gap",
+      "2026-08-28-ed-embedded-cga-hospital-at-home-discharge",
+      "2026-09-11-frailty-predicts-functional-decline-hospital-meta-analysis"
+     ]
+    },
+    {
+     "date": "2026-10",
+     "status": "provisional",
+     "note": "Second monthly cycle. A digital frailty-triggered assessment system (71% assessed within four days, rho 0.38 with clinician assessment), emergency department frailty tools that predicted mortality but not readmission, and a surgical verification programme (assessment +4.0 percentage points) each evidence fidelity and coordination as the constraint at process level only. The register's two-cycle rule is met; promotion would need to be stated on narrowed wording and is not made this cycle.",
+     "references": [
+      {
+       "pmid": "42763222"
+      },
+      {
+       "pmid": "42806214"
+      },
+      {
+       "cite": "Yap EN, Reed M, Huang J, et al. Impact of Geriatric Surgery Verification Program Implementation on Vulnerability Assessment Rates: A Multicenter Retrospective Cohort Study. Journal of the American College of Surgeons, 17 September 2026. DOI 10.1097/XCS.0000000000002207",
+       "url": "https://doi.org/10.1097/XCS.0000000000002207"
+      }
+     ],
+     "supporting": [
+      "2026-09-18-geriatric-surgery-verification-program-vulnerability-assessment",
+      "2026-10-02-week-ending-2-october"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P14",
+   "title": "Real-world remote patient monitoring can redistribute rather than reduce clinical workload, without a matching outcome gain",
+   "status": "provisional",
+   "confirmation_level": "Provisional: a second and third source add workload landing sites (alert desks, carers) but net workload remains unmeasured; stays provisional",
+   "first_appeared": "2026-09",
+   "domains": [
+    "D01"
+   ],
+   "history": [
+    {
+     "date": "2026-09",
+     "status": "provisional",
+     "note": "New this period. A retrospective real-world comparison of two Dutch hospitals in the same regional care network found remote patient management for heart failure significantly increased nurse-practitioner consultation frequency and duration compared with usual care at both a matched and an unmatched comparator hospital, with no significant difference in cardiologist consultation time or heart-failure-related readmissions. Disconfirmation condition: a second real-world (non-trial) comparison, in another condition or country, showing remote monitoring reduces or does not increase clinical contact time, would qualify or discard this pattern.",
+     "references": [
+      {
+       "pmid": "42691076"
+      }
+     ]
+    },
+    {
+     "date": "2026-10",
+     "status": "provisional",
+     "note": "Extended and partly qualified. A Dutch comparison (nurse-practitioner consultations 15.3 against 5.3 per patient, consultation time 233 against 121 minutes, readmissions unchanged; n=131) is joined by Australian and New Zealand device clinics spending 30.2% of workload on alert management (90.5% by cardiac physiologists) and a Sydney virtual hospital in which carers took technical roles. The Australia and New Zealand data also show remotely monitored patients attending in person less often (10.0 against 7.2 months), so the net effect on workload is unmeasured; this is a shift of contact, not a measured net increase. Disconfirmation condition: a comparative study showing remote monitoring lowers total clinical contact time once alert handling is counted, in a condition other than heart failure or cardiac devices, would qualify or discard this pattern.",
+     "references": [
+      {
+       "pmid": "42691076"
+      },
+      {
+       "pmid": "41737930"
+      },
+      {
+       "pmid": "41937437"
+      }
+     ],
+     "supporting": [
+      "2026-09-04-week-ending-4-september",
+      "2026-09-04-uk-palliative-virtual-wards-survey",
+      "2026-09-11-virtual-hospital-carer-roles-australia"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P15",
+   "title": "A capacity or equity safeguard is identified with precision and then left unbuilt",
+   "status": "provisional",
+   "confirmation_level": "Provisional: the publication's own inference, evidenced by a third consecutive month naming a distinct mechanism (workforce distribution in July; AI-tool equity risk in August; carer and community-nursing capacity in September) with no corresponding commissioning or funding gate; per this register's grading discipline for self-referential convergences, not yet externally confirmed and not promotable by further restatement alone",
+   "first_appeared": "2026-09",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-09",
+     "status": "provisional",
+     "note": "First formal register entry. The same institutional sequencing choice has now recurred across three consecutive monthly reviews under three different mechanisms: a workforce-distribution criterion left unconstituted while a training-post headline proceeded (July); an AI documentation tool's equity risk named in guidance but attached to no pre-deployment gate (August); and, this month, a caregiver- and community-nursing-capacity requirement identified independently across a UK implementation evaluation and a US national dataset, attached to no funding mandate in any source read for this edition. As a self-referential, publication-level inference rather than an externally sourced finding, this enters provisional per this register's grading discipline and cannot be promoted by further restatement of the same observation -- only by external evidence (a national commissioning specification that builds the safeguard, or a system shown to fail for lack of it) or by events. Disconfirmation condition: a national commissioning specification that explicitly requires and funds the safeguard it has previously only named would disconfirm this pattern as an ongoing habit.",
+     "supporting": [
+      "2026-07-workforce-training-posts-unresolved-allocation",
+      "2026-08-deprivation-rurality-ai-equity-risk"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P16",
+   "title": "Process measures move; patient-outcome measures are flat, untested or unmeasured",
+   "status": "provisional",
+   "confirmation_level": "Provisional: the publication's own inference, drawn from eight evidence streams across five domains in one monthly cycle; not yet externally confirmed and not promotable by restatement",
+   "first_appeared": "2026-10",
+   "domains": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+   ],
+   "history": [
+    {
+     "date": "2026-10",
+     "status": "provisional",
+     "note": "New this month. Across weeks from 11 September to 2 October, the measures a protocol, structure or device can move did move, while patient-outcome measures were flat, untested or unmeasured: emergency department frailty tools predicted 30- and 90-day mortality but not readmission (n=402); frailty status and hospitalisation within triage categories (3,127 visits) had a non-significant global interaction; a digital frailty-triggered geriatric assessment system reached assessment within four days in 71% with no patient outcome measured and modest agreement with clinician-led assessment (rho 0.38); frailty-targeted cardiovascular rehabilitation improved proximal function without a mortality benefit at very low certainty; home pulmonary rehabilitation fell short of the minimum clinically important difference on average; ReSPECT and DNACPR documentation rose from 2.55% to 5.57% in an uncontrolled report; a 41-trial review found goals-of-care interventions raise documentation without reliably changing utilisation; and a geriatric surgery verification programme raised vulnerability assessment by 4.0 percentage points across 20 hospitals. Each is individually honest about its limits; the shape is visible only when they are read together. Self-referential cross-domain inference, so it enters provisional and cannot be promoted by restatement. Disconfirmation condition: a controlled evaluation in which a process or identification intervention changes readmission, time at home or place of death against usual practice, across more than one domain.",
+     "references": [
+      {
+       "pmid": "42806214"
+      },
+      {
+       "pmid": "42811477"
+      },
+      {
+       "pmid": "42763222"
+      },
+      {
+       "pmid": "42772577"
+      },
+      {
+       "pmid": "42813303"
+      },
+      {
+       "pmid": "42710076"
+      },
+      {
+       "cite": "Thomas TH, Chen L, Nipp RD, Schenker Y. Interventions Promoting Goals of Care Conversations in Serious Illness: A Narrative Review. Journal of Palliative Medicine, 14 September 2026. DOI 10.1177/10966218261485018",
+       "url": "https://doi.org/10.1177/10966218261485018"
+      },
+      {
+       "cite": "Yap EN, Reed M, Huang J, et al. Impact of Geriatric Surgery Verification Program Implementation on Vulnerability Assessment Rates: A Multicenter Retrospective Cohort Study. Journal of the American College of Surgeons, 17 September 2026. DOI 10.1097/XCS.0000000000002207",
+       "url": "https://doi.org/10.1097/XCS.0000000000002207"
+      }
+     ],
+     "supporting": [
+      "2026-09-18-geriatric-surgery-verification-program-vulnerability-assessment",
+      "2026-09-18-goals-of-care-conversations-narrative-review",
+      "2026-09-25-frailty-cardiac-rehabilitation-functional-gains-not-mortality",
+      "2026-09-11-week-ending-11-september",
+      "2026-09-18-week-ending-18-september",
+      "2026-09-25-week-ending-25-september",
+      "2026-10-02-week-ending-2-october"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P17",
+   "title": "Remote and virtual care reaches dispersed populations where the model is built around the distance problem, and loses reliability where a ward-validated device is sent home",
+   "status": "provisional",
+   "confirmation_level": "Provisional: four sources in one monthly cycle (a hub-and-spoke inpatient model, a national device-clinic survey, a single-centre wearable study and a rural telehealth scoping review); awaits a second cycle before promotion consideration",
+   "first_appeared": "2026-10",
+   "domains": [
+    "D01",
+    "D03"
+   ],
+   "history": [
+    {
+     "date": "2026-10",
+     "status": "provisional",
+     "note": "New this month. A Quebec hub-and-spoke virtual inpatient unit preserved 786 hospitalisation-days with no on-site registered nurses; remote-monitoring use was highest in remote (88.4%) and rural (85.3%) regions of Australia and New Zealand against metropolitan regions (80.3%), though those are passively transmitting implanted devices; a wearable vital-sign monitor validated on wards had oxygen-saturation availability of 48% in hospital and 39% at home (n=45, one centre); and a rural telehealth scoping review points to hybrid, locally anchored access with low confidence in durable emergency department use reduction. Disconfirmation condition: a patient-operated, non-passive remote technology showing lower reach in remote and rural populations than metropolitan ones would qualify the 'designed around distance' reading.",
+     "references": [
+      {
+       "pmid": "42615595"
+      },
+      {
+       "pmid": "41737930"
+      },
+      {
+       "pmid": "42348131"
+      },
+      {
+       "pmid": "42355916"
+      }
+     ],
+     "supporting": [
+      "2026-09-18-rural-telehealth-scoping-review-north-america",
+      "2026-09-18-canada-hospital-at-home-workshop-series"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "VF-P18",
+   "title": "Social and material disadvantage lengthens time in the system and lowers recovery",
+   "status": "provisional",
+   "confirmation_level": "Provisional: two independent non-UK cohorts in one monthly cycle (Ontario administrative data and a US physiotherapy cohort), neither testing a UK deprivation gradient; awaits a second cycle and UK evidence",
+   "first_appeared": "2026-10",
+   "domains": [
+    "D01",
+    "D03",
+    "D04"
+   ],
+   "history": [
+    {
+     "date": "2026-10",
+     "status": "provisional",
+     "note": "New this month. In Ontario, recent homelessness carried an alternate-level-of-care designation in 9.1% against 2.0% of matched patients from the most materially deprived neighbourhoods (rate ratio 4.51; 51,377 patients); in a US prospective physiotherapy cohort, greater social-need burden independently lowered discharge function (B=-2.35; n=164, with attrition). Both are non-UK. Rural hospice disparities already recorded under VF-P12 bear on the same observation. Disconfirmation condition: a UK analysis of delayed discharge or rehabilitation outcome showing no deprivation gradient after case-mix adjustment would qualify or discard this pattern.",
+     "references": [
+      {
+       "pmid": "42467431"
+      },
+      {
+       "pmid": "42816756"
+      },
+      {
+       "pmid": "40331105"
+      }
+     ],
+     "supporting": [
+      "2026-10-02-homelessness-delayed-discharge-ontario-cohort",
+      "2026-10-02-week-ending-2-october"
      ]
     }
    ]

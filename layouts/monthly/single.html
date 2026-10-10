@@ -45,8 +45,11 @@
         {{ .Params.vat_signal_text }}
       </aside>
     {{ end }}
+    {{/* Same claim-flag registers as _default/single.html. This template
+         overrides that one, so the shared transform has to be called here
+         too — inline logic there reached every section EXCEPT the flagship. */}}
     <div class="content-text">
-      {{ partial "pattern-link.html" (partial "pmid-link.html" .Content) }}
+      {{ partial "claim-flags.html" . | safeHTML }}
     </div>
     {{ partial "pattern-backlinks.html" . }}
     {{ partial "sources.html" . }}

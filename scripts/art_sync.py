@@ -7,6 +7,25 @@ back to least-recently-uploaded (createdTime order) within the domain pool.
 Downloads assigned images to assets/images/cards/<domain>/.
 Updates data/card_art.json manifest.
 
+data/card_art.json IS THE ASSIGNMENT RECORD. This script does NOT write
+card_image: into content files, and must never be changed to do so.
+`layouts/partials/card-art.html` resolves the manifest by slug at render time,
+so an assignment is already fully effective without touching the post.
+
+Why it matters (diagnosed 27 Jul 2026): content files under content/signal,
+content/synthesis and content/monthly are owned by drive_sync.py, which
+overwrites them wholesale from Drive. Drive originals carry no card_image, so
+anything injected here was destroyed on the next run. The two scripts run in
+the same workflow, so every real sync was followed by a *strip-only* commit
+carrying zero new content — which still defeated the `git diff --staged
+--quiet` guard, still pushed, and still triggered a full production build.
+It roughly doubled the site's deploy count. Measured oscillation on `main`:
+12 Jul +5 / 13 Jul −5, 19 Jul +13 / −13, 26 Jul +12 / 27 Jul −12.
+
+A human-authored card_image: in a post is still honoured — it is priority 1 in
+the render partial, and posts carrying one are skipped for assignment below.
+drive_sync.py preserves it across overwrites so the pin is durable.
+
 Images are shown as a SLUG-SEEDED CROP — background-position is calculated
 from the post slug so every card shows a different section of its image.
 This gives variety even when multiple posts share the same source image.
@@ -80,24 +99,6 @@ def parse_frontmatter(text: str) -> dict:
             elif val:
                 fm[key] = val
     return fm
-
-
-def inject_card_image(path: Path, value: str) -> None:
-    text = path.read_text()
-    lines = text.splitlines(keepends=True)
-    close_idx = None
-    in_fm = False
-    for i, line in enumerate(lines):
-        if line.strip() == "---":
-            if not in_fm:
-                in_fm = True
-            else:
-                close_idx = i
-                break
-    if close_idx is None:
-        return
-    lines.insert(close_idx, f'card_image: "cards/{value}"\n')
-    path.write_text("".join(lines))
 
 
 # ── Scoring — image title keywords vs post content ────────────────────────────
@@ -221,7 +222,6 @@ def main():
     for post in posts:
         slug = post["slug"]
         fm = post["fm"]
-        path = post["path"]
 
         # Already in manifest — ensure downloaded
         if slug in assignments:
@@ -297,7 +297,8 @@ def main():
             download(service, candidate["id"], dest)
             downloaded_count += 1
 
-        inject_card_image(path, entry)
+        # Deliberately no write to the post file: the manifest below is the
+        # record and the render partial reads it. See the module docstring.
         print(f"ART_SYNC: assigned {entry} → {slug}")
 
     manifest["assignments"] = assignments

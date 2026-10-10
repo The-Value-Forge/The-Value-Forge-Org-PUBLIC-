@@ -30,8 +30,42 @@
           <input type="hidden" name="anticsrf" value="true">
           <button class="follow__btn" type="submit">Subscribe</button>
         </div>
-        <p class="follow__fineprint">The weekly and monthly editions by email. No tracking, no sharing; unsubscribe anytime.</p>
+        <p class="follow__fineprint" data-follow-note>The weekly and monthly editions by email. No tracking, no sharing; unsubscribe anytime.</p>
+        <p class="follow__fineprint" data-follow-status role="status" aria-live="polite" hidden></p>
       </form>
+      {{/* Submit in place rather than in a new tab (4 Oct 2026). MailerLite's
+           endpoint answers with bare JSON, so every subscriber was shown a tab
+           reading {"success":true} and nothing else. The POST is a simple
+           cross-origin request, so `no-cors` sends it without needing CORS
+           headers; the reply is unreadable by design, so success is reported
+           only once the request has gone, and a network failure falls back to
+           the plain form post above. Double opt-in is on, so the message tells
+           the reader the one thing left to do. Without JavaScript nothing here
+           runs and the form behaves exactly as before. */}}
+      <script>
+      (function () {
+        var form = document.querySelector('.follow__email[action]');
+        if (!form || !window.fetch || !window.URLSearchParams) return;
+        var status = form.querySelector('[data-follow-status]');
+        var note = form.querySelector('[data-follow-note]');
+        var row = form.querySelector('.follow__row');
+        var btn = form.querySelector('.follow__btn');
+        form.addEventListener('submit', function (e) {
+          if (!form.reportValidity()) { e.preventDefault(); return; }
+          e.preventDefault();
+          btn.disabled = true;
+          fetch(form.action, { method: 'POST', mode: 'no-cors',
+                               body: new URLSearchParams(new FormData(form)) })
+            .then(function () {
+              row.style.display = 'none';
+              note.hidden = true;
+              status.textContent = 'Thank you. Check your inbox and click the link in the email to confirm your subscription.';
+              status.hidden = false;
+            })
+            .catch(function () { btn.disabled = false; form.submit(); });
+        });
+      })();
+      </script>
       {{- else }}
       <div class="follow__route follow__email follow__email--soon">
         <span class="follow__label">Email edition</span>

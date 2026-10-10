@@ -39,4 +39,30 @@
   --vf-font-body:  -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --vf-font-head:  Georgia, "Times New Roman", serif;
   --vf-font-mono:  "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  /* — Type scale —
+     11 / 13 / 16 / 18 / 20 / 24 / 32 / 44px at a 16px root.
+
+     THESE LIVED IN main.css UNTIL 7 SEP 2026, WHICH IS WHY THEY ARE HERE NOW.
+     The token-sync check in scripts/audit_css.py only polices `--vf-*` names
+     across these two files, so a ramp defined in main.css was outside it — the
+     one part of the type system nothing was checking. That is precisely how
+     `--measure` drifted unnoticed for weeks (a session "corrected" 80ch to 68ch
+     from a stale comment, against the editor's explicit 9 Aug decision), and the
+     August type-scale thread named this gap as its root cause. main.css now
+     aliases `--text-*` onto these, the same bridge pattern already used for
+     --ink / --teal / --gold.
+
+     The DESKTOP endpoints of the fluid heading clamps sit on this ramp on
+     purpose: nothing new enters the type system at the size it is actually read
+     at. The clamps themselves stay in main.css — they are a layout behaviour,
+     not a token. */
+  --vf-text-xs:   0.6875rem;
+  --vf-text-sm:   0.8125rem;
+  --vf-text-base: 1rem;
+  --vf-text-lg:   1.125rem;
+  --vf-text-xl:   1.25rem;
+  --vf-text-2xl:  1.5rem;
+  --vf-text-3xl:  2rem;
+  --vf-text-4xl:  2.75rem;
 }

@@ -2,7 +2,7 @@
 
 Captured 18 June 2026. Decoupled summaries of two of the three foundation companions.
 Canonical originals (Drive): `PROJECT-system-foundation-v2`, `PROJECT-design-rationale-v1`.
-Third companion `VALUE-FORGE-GOVERNANCE-v1` (Drive) — **still to ingest** (decoupled).
+Third companion `VALUE-FORGE-GOVERNANCE-v1` (Drive) — **decoupled essentials ingested**, in "Governance (decoupled essentials)" below. The identifying material (the owner's role, named trusts and hospitals) is deliberately omitted and stays omitted. Until 10 Sep 2026 this line still called it un-ingested, directly above the section that had ingested it.
 Sibling: `docs/PROJECT-intellectual-foundation-v3.md` (the *why*); this file is the *how* and the *why-built-this-way*.
 
 > Decoupled: the originals are grounded in a named, specific deprived population and contain internal Drive folder IDs; both are rendered/omitted here so the repo stays decoupled and public-safe.

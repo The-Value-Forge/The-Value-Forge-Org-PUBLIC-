@@ -96,7 +96,7 @@ sources:
     detail: "22 June 2026"
     pmid: ""
     doi: ""
-    url: ""
+    url: "https://www.gov.uk/government/publications/letter-to-baroness-casey-progress-on-adult-social-care-reform-recommendations"
   - authors: "House of Lords"
     title: "Healthcare Services (Acute, Primary and Community)"
     container: "Hansard"
@@ -104,7 +104,7 @@ sources:
     detail: "25 June 2026"
     pmid: ""
     doi: ""
-    url: ""
+    url: "https://hansard.parliament.uk/Lords/2026-06-25/debates/6CFC1521-C981-4485-ABA2-7E3A3DD3D53E/HealthcareServicesAcutePrimaryAndCommunity"
 ---
 
 The evidence base for community-based acute care crossed a significant threshold this week. Hospital-at-Home now has strong randomised evidence for preserving physical function, but the risk stratification tools needed to deliver it safely in community settings are demonstrably inadequate. Separately, a meta-analysis revealed an urgent prescribing safety signal for ceftriaxone — the most widely used antibiotic for outpatient intravenous therapy.

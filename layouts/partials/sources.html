@@ -6,8 +6,11 @@
 <section class="sources" aria-label="Sources">
   <h2 class="sources-label">Sources</h2>
   <ol class="sources-list">
-    {{- range . }}
-    <li>
+    {{- /* The id is the landing point for the in-body reference markers that
+           cite-link.html writes. Numbering is this range's own order, which is
+           the order the markers are derived from, so the two cannot drift. */ -}}
+    {{- range $i, $s := . }}
+    <li id="source-{{ add $i 1 }}">
       {{- /* Some pipeline batches emit a single pre-formatted citation: string
              instead of the structured fields — render it as-is when present. */ -}}
       {{ with .citation }}{{ strings.TrimSuffix "." . }}.{{ end }}

@@ -1,6 +1,6 @@
 ---
 type: signal
-title: "Home-based VCSE frailty prevention reduces unplanned admissions by 35%"
+title: "VCSE home frailty prevention cut unplanned admissions 35% but did not improve independence"
 date: 2026-06-19
 domains: ["Frailty"]
 domain: ["d01"]
@@ -19,8 +19,10 @@ tags:
   - cost-effectiveness
 ---
 
-A pragmatic randomised controlled trial (n = 388) evaluated a voluntary-sector-delivered home health programme for community-dwelling older adults with mild frailty (Clinical Frailty Scale 4–5). Trained facilitators delivered structured health promotion across falls prevention, nutrition, physical activity, social engagement and emotional wellbeing, with sessions in participants' homes over six months.
+A single-blind pragmatic randomised controlled trial recruited 388 community-dwelling people aged 65 and over with mild frailty, from 27 general practices and community settings in London, Yorkshire and Hertfordshire, and randomised them 1:1 to HomeHealth or treatment as usual. HomeHealth is a voluntary-sector service in which support workers discuss the person's own priorities and help them set and pursue goals around mobility, nutrition, socialising or psychological wellbeing — a behaviour-change model rather than a delivered exercise or education programme.
 
-The trial reported a 35% reduction in unplanned hospital admissions in the intervention group compared with usual care. Economic analysis demonstrated net cost savings of £586 per participant, driven primarily by reduced acute care utilisation. The study was funded through the NIHR Health Technology Assessment programme.
+**The primary outcome was null.** Independence in activities of daily living, measured by the modified Barthel Index at 12 months, showed no improvement: 0.250 (95% confidence interval −0.932 to 1.432). The authors state it plainly — HomeHealth did not improve independent functioning for older people with mild frailty.
 
-This [Primary Study] evidence demonstrates that voluntary and community sector organisations can deliver clinically effective frailty prevention at scale, outside traditional NHS structures. The cost-saving profile strengthens the case for commissioning such models as part of population health management strategies for older adults living with early-stage frailty.
+Several secondary outcomes did move. At six months there were small significant reductions in psychological distress (−1.237, 95% CI −2.127 to −0.348) and in frailty phenotype score (−0.252, 95% CI −0.487 to −0.017). At 12 months wellbeing improved (1.449, 95% CI 0.124 to 2.775) and unplanned admissions fell by 35% (incidence rate ratio 0.65, 95% CI 0.54 to 0.92), with lower associated costs of −£586 per participant (95% CI −351 to −821). The trial reports a high probability of cost-effectiveness against treatment as usual. The process evaluation found the service acceptable and safe with good fidelity of delivery, and identified engagement as harder where participants saw no need for change or had significant memory impairment. Funded by the NIHR Health Technology Assessment programme.
+
+[Primary Study] The reading this evidence supports is narrower than "frailty prevention works", and the distinction is the point. A voluntary-sector, goal-setting service did not change the functional independence it was designed to protect, while reducing unplanned admissions and costs and improving wellbeing. Those are real findings from a randomised comparison, and they are secondary ones: a commissioning case built on them rests on admission avoidance and wellbeing, not on preserved independence. Through the value-added-time lens the asymmetry is the interesting part — the service appears to change what happens *to* people in the acute system without changing what they can do for themselves, and a service framework that measured only the first would record a success the trial's own primary outcome does not support.

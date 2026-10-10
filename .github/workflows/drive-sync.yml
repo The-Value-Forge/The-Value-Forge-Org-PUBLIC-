@@ -15,13 +15,12 @@ name: Drive → GitHub sync
 #
 # That trigger is deliberately removed in this copy. Left in, the cron fires
 # here every day, finds no GDRIVE_SERVICE_ACCOUNT_KEY / GDRIVE_FOLDER_ID and
-# fails — which is exactly what happened for the first two days after this
-# repo was published (26 Jul 2026). A permanently red Actions tab on a
-# repository whose purpose is to show the method working is worse than useless.
+# fails.
 #
 # workflow_dispatch is kept: on a public repo only users with write access can
 # trigger it, so a visitor cannot run it.
 # ─────────────────────────────────────────────────────────────────────────────
+
 on:
   workflow_dispatch:  # manual only — see the note above
 
@@ -33,6 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # `pull-requests: write` stood here from 12 to 24 September 2026, for the
+      # hold path that committed an editorial cycle to a pipeline/cycle-* branch
+      # and opened a PR. That path is gone and so is the grant: nothing in this
+      # workflow opens a pull request any more. Restoring it needs the
+      # repository setting too — see the 403 note in CLAUDE.md, which is the
+      # part no file here can observe.
 
     steps:
       - name: Checkout
@@ -59,7 +64,15 @@ jobs:
           ART_POOL_FOLDER_ID: ${{ secrets.ART_POOL_FOLDER_ID }}
         run: python scripts/art_sync.py
 
-      - name: Commit any new or changed files
+      # ---- Change gate: does this cycle publish itself, or get a look first? ----
+      # Added 12 Sep 2026. Until then there was no separation between changing
+      # the pipeline and publishing with it: a routine went live by being pasted
+      # into production, and its FIRST run reached the public site automatically
+      # the next morning, unreviewed. The riskiest run of any change was the
+      # least supervised one. That is what turned a bad run into a corrupted
+      # publication. Reasoning in full: scripts/change_gate.py.
+      - name: Stage, then note what this cycle needs read closely
+        id: gate
         run: |
           git config user.name "TVF Pipeline Bot"
           git config user.email "pipeline-bot@users.noreply.github.com"
@@ -67,31 +80,174 @@ jobs:
                   data/patterns.json data/card_art.json \
                   assets/images/cards/
           if git diff --staged --quiet; then
-            echo "No changes — Drive output folder unchanged since last run."
-          else
-            COUNT=$(git diff --staged --name-only | wc -l)
-            git commit -m "sync: $COUNT file(s) from Drive output folder [$(date -u +%Y-%m-%dT%H:%MZ)]"
-            git push
+            echo "No changes - Drive output folder unchanged since last run."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "notices=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "count=$(git diff --staged --name-only | wc -l)" >> "$GITHUB_OUTPUT"
+          echo "cycle=$(git diff --staged --name-only | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)" >> "$GITHUB_OUTPUT"
+          pip install --quiet pyyaml
+          python3 scripts/change_gate.py \
+            --staged "$(git diff --staged --name-only | paste -sd, -)" \
+            --github-output
+
+      # EVERY cycle publishes. There is no hold path any more.
+      #
+      # There was one from 12 to 24 September 2026: an editorial cycle went to a
+      # pipeline/cycle-* branch and reached the site only when a reviewer merged
+      # the PR. On 18 September nothing merged it — the reviewer was refused on a
+      # usage limit before it ran a token — and the site served nine-day-old
+      # content until the owner noticed by looking at it. A hold nobody clears is
+      # indistinguishable from a pipeline that has died, and it is the failure
+      # that makes no noise.
+      #
+      # The checking did not go anywhere: the two guards below still turn this run
+      # RED, which is what sends the email. What went is the hold.
+      - name: Publish
+        if: steps.gate.outputs.changed == 'true'
+        run: |
+          git commit -m "sync: ${{ steps.gate.outputs.count }} file(s) from Drive output folder [$(date -u +%Y-%m-%dT%H:%MZ)]"
+          git push
+
+      # Not a failure, and deliberately not red: this is the reviewer's reading
+      # list for a cycle that is already live, not a problem with the run.
+      #
+      # THE TEXT ARRIVES THROUGH `env:`, NEVER THROUGH ${{ }} INSIDE `run:`.
+      # GitHub pastes ${{ }} into the script as raw text before bash parses it,
+      # so the first version of this step executed its own message: the notice
+      # "has no `activated:` date" ran `activated:` as a command, dropped the
+      # word, and stayed green. The same text carries artefact FILENAMES from
+      # Drive, so a filename containing $(...) would have run as code on a
+      # runner holding contents: write. An environment variable is data to
+      # bash, not code. Caught on 24 Sep 2026 by a cold re-read, before this
+      # step ever ran on main.
+      - name: What to read closely in this cycle
+        if: steps.gate.outputs.changed == 'true' && steps.gate.outputs.notices == 'true'
+        env:
+          NOTICE_TEXT: ${{ steps.gate.outputs.notice_text }}
+        run: |
+          echo "::notice::PUBLISHED, AND WORTH A CLOSE READ — ${NOTICE_TEXT} The cycle is live; the weekly review reads it on the site and repairs the Drive original if anything is wrong."
 
       # ---- Alerting (runs AFTER the commit so good content always lands) ----
       # GitHub only emails on a FAILED run; annotations alone leave the run
       # green and silent — how the 19-Jun break stayed invisible for 13 days.
 
+      # THE CANARY MEASURES THE PUBLISHED BRANCH, NOT THE WORKING TREE
+      # (rewritten 21 Sep 2026, after it stayed green through a week in which
+      # the site published nothing).
+      #
+      # It used to `ls content/` in the RUNNER'S tree — which is main plus
+      # whatever this run just fetched from Drive. That was exactly right until
+      # 12 September, because back then everything fetched was also published:
+      # the sync committed straight to main, so "newest file I fetched" and
+      # "newest file on the site" were the same number.
+      #
+      # The change gate broke that equivalence and nothing here was updated. A
+      # held cycle is fetched, staged, committed to a pipeline/cycle-* branch
+      # and NOT published — so the canary saw the 18 September synthesis in its
+      # own tree, measured it at two days old, and passed, while the deployed
+      # site still showed 11 September. the editor found out by looking at the
+      # website. The one alarm built to make "content stops appearing"
+      # non-silent was blind to the single most likely way content now stops
+      # appearing, because the gate changed the premise underneath it.
+      #
+      # The shape, and it is this repo's own: a check stays green not because it
+      # is wrong but because what it measures stopped being what it means. So
+      # ask of every check here what it would have to be true for it to keep
+      # passing while the thing it guards has failed.
+      #
+      # Two questions now, because they have two different causes:
+      #   ARRIVING  — is Drive still producing cycles? (upstream: translator,
+      #               slots 2/3, Drive readable). Measured on the tree.
+      #   PUBLISHED — is any of it actually on the site? (downstream: a held
+      #               cycle nobody merged). Measured on origin/main, which is
+      #               what Netlify deploys.
       - name: Content freshness canary (weekly cycle heartbeat)
         run: |
-          newest=$(ls content/signal content/synthesis 2>/dev/null \
-                   | grep -oE '^[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)
-          if [ -z "$newest" ]; then echo "::error::No dated content found at all"; exit 1; fi
-          age_days=$(( ( $(date -u +%s) - $(date -u -d "$newest" +%s) ) / 86400 ))
-          echo "Newest signal/synthesis is dated $newest (${age_days}d old)"
-          if [ "$age_days" -gt 9 ]; then
-            echo "::error::WEEKLY CYCLE APPEARS TO HAVE STOPPED — newest content is ${age_days} days old (>9). Check: translator ran Saturday? Slots 2/3 wrote to ROUTINE-OUTPUTS? Drive readable? This failure is the heartbeat working, not necessarily a sync bug."
+          age_of() {   # newest YYYY-MM-DD in a newline-separated list of names
+            d=$(grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort | tail -1)
+            [ -z "$d" ] && { echo ""; return; }
+            echo "$d $(( ( $(date -u +%s) - $(date -u -d "$d" +%s) ) / 86400 ))"
+          }
+
+          arriving=$(ls content/signal content/synthesis 2>/dev/null | age_of)
+          git fetch origin main --quiet
+          published=$(git ls-tree -r --name-only origin/main -- content/signal content/synthesis | age_of)
+
+          if [ -z "$arriving" ] || [ -z "$published" ]; then
+            echo "::error::No dated content found at all"; exit 1
+          fi
+          echo "Newest FETCHED   : $arriving day(s) old"
+          echo "Newest PUBLISHED : $published day(s) old  (origin/main — what Netlify serves)"
+
+          # The two ages should now track each other, because every cycle
+          # publishes on arrival. A GAP BETWEEN THEM IS ITSELF THE FINDING: it
+          # means content reached this runner and did not reach origin/main, so
+          # the commit or the push failed rather than the upstream drying up.
+          if [ "${published#* }" -gt 9 ]; then
+            echo "::error::NOTHING HAS PUBLISHED IN ${published#* } DAYS — origin/main's newest artefact is dated ${published%% *} (>9), while the newest content this run could see is ${arriving#* }d old. If those two numbers differ, the sync fetched a cycle and failed to push it: check this job's Publish step. If they match, the cycle never arrived — check the translator ran Saturday and slots 2/3 wrote to ROUTINE-OUTPUTS."
             exit 1
           fi
+          if [ "${arriving#* }" -gt 9 ]; then
+            echo "::error::WEEKLY CYCLE APPEARS TO HAVE STOPPED ARRIVING — newest content this run could see is dated ${arriving%% *} (${arriving#* }d, >9). Check: translator ran Saturday? Slots 2/3 wrote to ROUTINE-OUTPUTS? Drive readable? This failure is the heartbeat working, not necessarily a sync bug."
+            exit 1
+          fi
+          # A three-day held-cycle rule stood here from 21 to 24 September 2026,
+          # for the case where a pipeline/cycle-* branch existed and nobody had
+          # merged it. THE HOLD PATH IS GONE, so that branch is never created and
+          # the rule could only ever have been dead code — and dead code that
+          # reads like a live safeguard is how this pipeline has been misled
+          # before. Deleted rather than left to reassure.
+          #
+          # A stray pipeline/cycle-* branch is still worth saying out loud,
+          # because it means someone held a cycle by hand and it will never
+          # publish on its own.
+          stray=$(git ls-remote --heads origin 'refs/heads/pipeline/cycle-*' | sed 's#.*refs/heads/##' | sort | tr '\n' ' ')
+          if [ -n "$stray" ]; then
+            echo "::warning::A pipeline/cycle-* branch exists: $stray. Nothing creates these any more, so it was made by hand and nothing will publish it. Merge it or delete it."
+          fi
+
+      # Added 12 Sep 2026. The 12 Sep run published 2 Signals against 11-12 in
+      # each of the eight preceding weeks, lost seven of sixteen Evidence Watch
+      # items with no trace, and carried "fortnight" into an artefact titled
+      # "Week ending 11 September" six times. Every guard that existed passed:
+      # citations were complete, no artefact was a stub, the register was intact.
+      # The defect was in a class nobody had built a guard for, and it was caught
+      # by the editor looking in the Drive folder before the sync.
+      #
+      # validate_cycle.py already asked cycle-scoped questions but nothing ran it,
+      # so it only answered when somebody remembered to ask. Now the sync asks.
+      - name: Validate what this cycle actually produced
+        run: |
+          python3 scripts/validate_cycle.py --strict || {
+            echo "::error::CYCLE VALIDATION FAILED — see the log above. Window framing, domain vocabulary, coverage ratio, cross-references, provenance or citation integrity. The content WAS published; fix the Drive original (a repo-side fix is reverted by the next sync) and re-run. This red run exists so you get the email."
+            exit 1
+          }
 
       - name: Fail loudly if pattern-register guards fired
         if: steps.drive_sync.outputs.guard_failures != '' && steps.drive_sync.outputs.guard_failures != '0'
         run: |
           echo "::error::PATTERN REGISTER PROTECTED — ${{ steps.drive_sync.outputs.guard_failures }} guard failure(s). The incoming patterns file would have lost or rewritten existing record and was HELD. See the step summary. Content otherwise synced normally; this red run exists so you get the email."
           exit 1
+
+      # The message used to say "an empty sources: list and no internal
+      # cross-references" — one of the THREE checks feeding this counter, which
+      # also carries unreachable individual entries and undersized artefacts. A
+      # guard that announces a broader verdict than it measured is the same
+      # defect CLAUDE.md records about the secret scanner; naming the checks is
+      # the fix, and the step summary carries the per-entry detail.
+      - name: Fail loudly if THIS RUN published an artefact with unreachable claims
+        if: steps.drive_sync.outputs.integrity_failures != '' && steps.drive_sync.outputs.integrity_failures != '0'
+        run: |
+          echo "::error::CITATION INTEGRITY — ${{ steps.drive_sync.outputs.integrity_failures }} failure(s) in artefact(s) THIS RUN created or changed: an empty sources: list with no internal cross-reference, a source entry carrying no pmid/doi/url, or an artefact below the size floor. See the step summary for which. The content WAS published; fix the Drive original and re-run. This red run exists so you get the email — the 7 Aug 2026 loss shipped silently on a green run."
+          exit 1
+
+      # Reported, never red. See the long note in drive_sync.py: the pre-existing
+      # backlog cannot be cleared from inside the sync, and a permanently red
+      # sync destroys the only alarm the pipeline has.
+      - name: Report the pre-existing citation backlog
+        if: steps.drive_sync.outputs.integrity_backlog != '' && steps.drive_sync.outputs.integrity_backlog != '0'
+        run: |
+          echo "::warning::CITATION INTEGRITY BACKLOG — ${{ steps.drive_sync.outputs.integrity_backlog }} defect(s) in already-published artefacts this run did not touch. Named in full in the step summary. Not a failure of this run; still a defect on the site."

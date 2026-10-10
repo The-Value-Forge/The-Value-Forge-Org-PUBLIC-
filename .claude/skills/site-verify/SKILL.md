@@ -28,6 +28,57 @@ with previews it's still the faster first pass. Pattern adapted from Anthropic's
   anything (`python3 -m http.server`). `hugo server` works too but rebuilds on
   watch — for verification, prefer the frozen `public/` build you're actually judging.
 - Write harnesses and screenshots to the session scratchpad, never into the repo.
+- **`hugo` may not be installed.** Several sessions have had no Hugo binary, which
+  makes the "build once, serve `public/`" loop below impossible. That is not a reason
+  to fall back to judging CSS by reading it — use the mirror loop instead.
+- **Chromium cannot reach the internet here.** It fails with `ERR_CONNECTION_RESET`
+  even against `example.com`, with or without `proxy: { server: process.env.HTTPS_PROXY }`.
+  `curl` *does* work through the proxy. So: fetch with curl, render from localhost.
+
+## Mirror loop — when there's no local Hugo (use this before giving up)
+
+Renders a **deployed** page (preview or production) in the local browser, which is
+the only way to see visual truth in a session with no Hugo. Cost: a handful of curls.
+
+```bash
+B="https://deploy-preview-N--thevalueforge.netlify.app"   # or https://thevalueforge.org
+mkdir -p mirror && cd mirror && curl -s "$B/" -o index.html
+python3 - <<PY
+import re, os, subprocess
+h = open('index.html').read()
+for u in sorted(set(re.findall(r'(?:href|src)=["\']?(/[^"\'> ]+\.(?:css|js|png|svg|webp|woff2|jpg))', h))):
+    p = u.lstrip('/'); os.makedirs(os.path.dirname(p) or '.', exist_ok=True)
+    subprocess.run(['curl','-s',"$B"+u,'-o',p], check=False)
+PY
+python3 -m http.server 8231 &            # then point Playwright at localhost:8231
+```
+
+**⚠️ Serve it. Never open the mirror with `file://`.** The site's assets are
+referenced by absolute path (`href=/css/bundle.min.….css`), and under `file://`
+those resolve to the *filesystem root* — so nothing loads, the page renders in
+Times New Roman on a transparent background, and it looks exactly like a
+catastrophic CSS regression. Wasted a cycle on 27 Jul verifying a dead-CSS
+removal that was in fact fine. The tell is `getComputedStyle(document.body)
+.backgroundColor` returning `rgba(0, 0, 0, 0)` instead of the paper colour
+`rgb(244, 242, 236)` — check that before believing any visual verdict.
+
+**⚠️ Strip `integrity` attributes if you edit any mirrored asset.** Hugo emits
+Subresource Integrity hashes on the CSS bundle. Patch the mirrored CSS to try a fix
+and the hash no longer matches, so the browser silently *refuses the whole
+stylesheet* — the page renders completely unstyled and every measurement is garbage,
+with no console error that names the cause. Cost an hour on 26 Jul. Either
+`re.sub(r'\sintegrity="[^"]*"','',html)` before serving, or check
+`document.styleSheets` lists the bundle before trusting any number.
+
+**Measure, don't eyeball, for alignment work.** `getBoundingClientRect()` on the
+elements that should share an axis, print the centres, and compare. This is what
+finally located a masthead bug three rounds of CSS-reading had missed:
+
+```js
+const c = s => { const r = document.querySelector(s)?.getBoundingClientRect();
+                 return r ? r.top + r.height/2 : null; };
+// then diff the centres — a non-zero spread IS the bug, and its size names the cause
+```
 
 ## Standard loop
 

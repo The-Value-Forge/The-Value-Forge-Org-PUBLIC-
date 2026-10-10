@@ -23,7 +23,13 @@ buildFuture = true
   #  subscribe_action — the email form POST url (MailerLite/Buttondown). Set to show the email edition form on the homepage.
   #  repo_url         — the PUBLIC GitHub repo url. Set ONLY once the public repo exists (Phase 6). Do NOT point at the private spike repo. Activates the "Source" footer link + the open-source line on the homepage.
   subscribe_action = "https://assets.mailerlite.com/jsonp/2528646/forms/193790359348708473/subscribe"
-  repo_url = ""
+  repo_url = "https://github.com/The-Value-Forge/The-Value-Forge-Org-PUBLIC-"
+  # alpha_phase — shows the "Alpha — this site is in early build" line in the footer
+  # (layouts/partials/footer.html). Set to false to remove it site-wide in one edit
+  # once the site is out of alpha. The template tests `ne … false`, so the notice
+  # also shows if this key is absent — it is stated explicitly here so the switch is
+  # discoverable from the config rather than only from the template.
+  alpha_phase = true
 
 [markup.goldmark.renderer]
   unsafe = true

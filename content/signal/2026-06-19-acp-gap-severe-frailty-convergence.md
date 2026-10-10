@@ -1,6 +1,6 @@
 ---
 type: signal
-title: "Advance care planning reaches fewer than 1 in 6 severely frail patients"
+title: "Advance care planning reached fewer than 1 in 6 severely frail patients in one hospital cohort"
 date: 2026-06-19
 domains: ["Frailty", "Palliative Care"]
 domain: ["d01", "d03"]
@@ -26,8 +26,8 @@ tags:
   - convergence
 ---
 
-A retrospective cohort study at a tertiary hospital found that only 16.3% of patients with Clinical Frailty Scale scores of 7–9 had documented advance care plans, despite a 31.4% six-month mortality rate in this group. The gap between mortality risk and planning uptake suggests that current systems for identifying and engaging severely frail patients in advance care planning are inadequate.
+A retrospective observational study of 86 patients with Clinical Frailty Scale scores of 7–9, admitted to the geriatric medicine wards of a public tertiary hospital in Singapore over three months, found that only 16.3% (14 of 86) had a completed advance care plan on admission, against a 31.4% six-month mortality rate in this group. The gap between mortality risk and planning uptake suggests that current systems for identifying and engaging severely frail patients in advance care planning are inadequate.
 
-This finding converges with two independent evidence streams. A systematic review of 83 studies found that community-based interventions designed to initiate early end-of-life conversations in non-terminally ill adults more than doubled advance care planning uptake (RR 2.24), demonstrating that effective interventions exist but are not reaching the populations most likely to benefit. An umbrella review spanning 61 systematic reviews confirmed that structured advance care planning programmes improve documentation rates and concordance between expressed wishes and care received.
+This finding converges with two independent evidence streams. A systematic review screening 30,869 abstracts and including 71 articles found community-based interventions to initiate early end-of-life conversations in non-terminally ill adults associated with more than double the rate of end-of-life and advance-care-planning behaviours (RR 2.24, 95% CI 1.42 to 3.53), pooled from 19 studies and 71,489 participants. That pooled estimate carries I² = 97% — heterogeneity high enough that it indicates a direction rather than an effect size, and high enough that which intervention, in which population, remains an open question. An umbrella review of 61 systematic reviews synthesised evidence that structured advance care planning programmes improve documentation rates and concordance between expressed wishes and care received.
 
-The convergence pattern is clear: the tools to close this [VF-Signal] gap exist and are evidence-supported, but severe frailty — the population with the strongest clinical indication — remains systematically under-reached. Services designing frailty pathways should consider embedding advance care planning triggers at defined Clinical Frailty Scale thresholds rather than relying on clinician-initiated conversations.
+The convergence is suggestive rather than settled [VF-Signal]: interventions to prompt these conversations are associated with substantially higher uptake, and the severely frail — the population with the strongest clinical indication — appear to be among the least reached. The uptake evidence is heterogeneous and the frailty figure comes from a single three-month cohort in another health system, so the gap is a hypothesis worth testing locally rather than a measured national shortfall. Services designing frailty pathways should consider embedding advance care planning triggers at defined Clinical Frailty Scale thresholds rather than relying on clinician-initiated conversations.

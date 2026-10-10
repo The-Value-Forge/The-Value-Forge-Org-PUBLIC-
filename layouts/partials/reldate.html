@@ -1,6 +1,16 @@
-{{- $diff := now.Sub . -}}
-{{- $days := int (div $diff.Hours 24) -}}
-{{- if lt $days 1 }}Today
-{{- else if eq $days 1 }}Yesterday
-{{- else if lt $days 7 }}{{ $days }} days ago
-{{- else }}{{ .Format "2 January 2006" }}{{ end -}}
+{{- /* Publication date, with a relative counter that is accurate WHEN READ.
+
+   The previous version computed "3 days ago" with `now.Sub` — at BUILD time.
+   That value is then frozen into the HTML, so it silently goes wrong the
+   moment the site isn't rebuilt: a page built on Monday still claimed "1 day
+   ago" the following Friday. This site rebuilds only when the daily sync finds
+   new Drive content, so quiet stretches are normal and the drift is real. On a
+   publication that stakes its credibility on evidential precision, a visibly
+   wrong date is a bad thing to get wrong (the editor, 26 Jul).
+
+   So the absolute date is what ships in the HTML — true forever, no JS needed.
+   The relative counter is appended at view time by the script in footer.html,
+   which reads the machine-readable datetime below. With no JS, or from a stale
+   cache, the reader still sees a correct date; they just lose the "4 days ago"
+   convenience. Nothing relative is ever baked in, so nothing can go stale. */ -}}
+<time class="reldate" datetime="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ .Format "2 January 2006" }}</time>
