@@ -30,7 +30,7 @@ sources:
     detail: "4 June 2026"
     pmid: ""
     doi: ""
-    url: ""
+    url: "https://questions-statements.parliament.uk/written-statements/detail/2026-06-04/hcws88"
 ---
 
 A Nuffield Trust and OpenSAFELY analysis using NHS England-approved linked primary care data (Bagri S et al., BMJ Supportive & Palliative Care; PMID 41980783) examined over 970,000 decedent records from March 2019 to August 2023 to evaluate which electronic health record data elements could function as quality indicators for end-of-life care. The headline finding was stark: specialist palliative care contacts were recorded in GP records for only 4–5% of patients on average. The authors conclude that this rate is too sparse to serve as a reliable population-level quality indicator — the data simply cannot support meaningful comparison between services or tracking of change over time.

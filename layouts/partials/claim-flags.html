@@ -1,0 +1,105 @@
+{{/*
+  claim-flags.html — give the pipeline's bold paragraphs their own registers.
+  Context: the Page. Returns rendered HTML (still a plain string; the CALLER
+  must pipe through safeHTML).
+
+  WHY THIS IS A PARTIAL AND NOT INLINE
+  It started life inline in `_default/single.html`, which silently did nothing
+  for the Monthly — `layouts/monthly/single.html` exists and takes precedence,
+  so the flagship, the one page most in need of this, was the one page that
+  never got it. The regex tests all passed; only rendering the real page showed
+  the zero. Two templates render pipeline prose, so the transform lives in one
+  place they both call.
+
+  WHAT IT FIXES
+  The translator emits domain names, cross-domain claims and editorial closers
+  all as bold paragraphs, so they render identically and the page reads as a
+  wall. CSS cannot help — it cannot match on text.
+
+  FAILURE MODE, BY DESIGN
+  Every rule below matches an exact, closed vocabulary. A renamed heading, a
+  sixth domain, or a pattern link landing inside the bold simply stops matching:
+  the page degrades to its previous appearance rather than breaking. A lost
+  section head is visible; mangled markup would not be.
+*/}}
+{{/*
+  THE TRANSFORM CHAIN, IN ORDER. Each step takes rendered HTML and returns it.
+  cite-link needs the Page (it numbers against .Params.sources), so it takes a
+  dict; the rest take the string. Citations are resolved BEFORE the evidence
+  labels are set, so a label never lands inside a half-built anchor.
+*/}}
+{{- $body := partial "pmid-link.html" .Content -}}
+{{- $body = partial "cite-link.html" (dict "page" . "body" $body) -}}
+{{- $body = partial "pattern-link.html" $body -}}
+
+{{- if eq .Section "synthesis" -}}
+  {{/* The two editorial-conclusion sections, boxed together with the single
+       prose paragraph that follows each (`.syn-note + p`). "Unresolved threads"
+       is deliberately excluded: it runs to a variable number of "Open question:"
+       paragraphs, so a two-element box would clip it. */}}
+  {{- $body = replaceRE `<p><strong>(Value added time[^<]*|Synthesising observation[^<]*)</strong></p>` `<p class="syn-note"><strong>$1</strong></p>` $body -}}
+
+  {{/* The five domain names are SECTION BOUNDARIES, not emphasis. The
+       vocabulary is fixed and closed by charter §6 — five domains, never more —
+       so matching by name is exact rather than a guess. */}}
+  {{- $body = replaceRE `<p><strong>(Acute Frailty|Clinical Psychology|Palliative Care|Therapies and AHPs|OPAT)</strong></p>` `<p class="syn-domain"><strong>$1</strong></p>` $body -}}
+{{- end -}}
+
+{{/* Claim-type flags, shared by synthesis and monthly because they share the
+     vocabulary. ORDER MATTERS: the monthly form carries a full sentence inside
+     the same <strong>, so it must be matched before the bare form, or the bare
+     pattern would consume its opening bracket and leave the sentence orphaned.
+
+     Lifting the flag out of the sentence is the whole point for the monthly: a
+     bold full sentence reads as a heading it is not, and re-setting a sentence
+     in a label register would be worse than leaving it alone. */}}
+{{- if or (eq .Section "synthesis") (eq .Section "monthly") -}}
+  {{- $reg := "/patterns/" | relURL -}}
+
+  {{/* THE VOCABULARY MOVED, AND THESE RULES DID NOT FOLLOW IT. Until 21 August
+       the translator wrote `**[Pattern]**`; from v3.9 it writes `[VF-Pattern]`,
+       and in a synthesis it no longer bolds it at all. Every rule below matched
+       the old spelling only, so from the 28 August batch onward the flag stopped
+       being a flag and became a bracketed token sitting in the prose — the same
+       failure the partial was written to fix, reintroduced by a rename.
+
+       Both spellings are matched from here on. The old one is not dead weight:
+       the July monthly and five July syntheses still carry it, and they are
+       still published pages. */}}
+
+  {{/* Monthly, numbered form: `**[VF-Pattern] 1 — A full claim sentence.**`
+       The number is real information — it is the pattern's position in that
+       month's set — so it is kept in the flag rather than discarded. */}}
+  {{- $body = replaceRE `<p><strong>\[(?:VF-)?Pattern\]\s*(\d+)\s*[—–-]\s*([^<]+)</strong>` (printf `<p class="claim"><a class="claim-flag" href="%s">Pattern ${1}</a><strong>${2}</strong>` $reg) $body -}}
+
+  {{/* Monthly, unnumbered form: `**[VF-Pattern] A full claim sentence.**` */}}
+  {{- $body = replaceRE `<p><strong>\[(?:VF-)?Pattern\]\s+([^<]+)</strong>` (printf `<p class="claim"><a class="claim-flag" href="%s">Pattern</a><strong>${1}</strong>` $reg) $body -}}
+  {{- $body = replaceRE `<p><strong>\[VF-Signal\]\s+([^<]+)</strong>` `<p class="claim"><b class="claim-flag claim-flag--weak">Signal</b><strong>${1}</strong>` $body -}}
+
+  {{/* The monthly's cross-domain observation. Not a pattern and not a weak
+       signal — the flagship's own synthesising claim — so it takes the full
+       accent and no link: there is nothing to link it to. Deliberately NOT the
+       same token as the `[Synthesis]` evidence TYPE that appears mid-sentence;
+       the leading `VF-` is what tells them apart, and evidence-labels.html
+       cannot confuse the two because it requires `[` immediately before the
+       word. */}}
+  {{- $body = replaceRE `<p><strong>\[VF-Synthesis\]\s+([^<]+)</strong>` `<p class="claim"><b class="claim-flag">Synthesis</b><strong>${1}</strong>` $body -}}
+  {{- $body = replaceRE `<p><strong>\[VF-Synthesis\]</strong>\s*` `<p class="claim"><b class="claim-flag">Synthesis</b>` $body -}}
+  {{- $body = replaceRE `<p>\[VF-Synthesis\]\s*` `<p class="claim"><b class="claim-flag">Synthesis</b>` $body -}}
+
+  {{/* Synthesis, bold-only form: `**[VF-Pattern]** Straight into prose…` */}}
+  {{- $body = replaceRE `<p><strong>\[(?:VF-)?Pattern\]</strong>\s*` (printf `<p class="claim"><a class="claim-flag" href="%s">Pattern</a>` $reg) $body -}}
+  {{- $body = replaceRE `<p><strong>\[VF-Signal\]</strong>\s*` `<p class="claim"><b class="claim-flag claim-flag--weak">Signal</b>` $body -}}
+
+  {{/* Synthesis, v3.9 form: no bold at all, the flag simply opens the paragraph
+       and an evidence status usually follows it. Matched last so the bolded
+       forms above take precedence where both could apply. */}}
+  {{- $body = replaceRE `<p>\[(?:VF-)?Pattern\]\s*` (printf `<p class="claim"><a class="claim-flag" href="%s">Pattern</a>` $reg) $body -}}
+  {{- $body = replaceRE `<p>\[VF-Signal\]\s*` `<p class="claim"><b class="claim-flag claim-flag--weak">Signal</b>` $body -}}
+{{- end -}}
+
+{{/* Evidence labels run last, over the whole body: by this point every link the
+     page needs has been built, so a label can no longer land inside one. */}}
+{{- $body = partial "evidence-labels.html" $body -}}
+
+{{- return $body -}}

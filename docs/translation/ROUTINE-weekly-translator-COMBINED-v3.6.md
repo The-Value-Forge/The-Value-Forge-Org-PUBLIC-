@@ -79,7 +79,7 @@ Strip without exception and without trace from public artefacts:
  - the surrounding county
  - the local patch
  - the regional ICB
- - the wider region
+ - the regional ICB
  - the local needs assessment
  - named local services, sites, wards, teams, local ICBs, or local ICS references
 
@@ -383,11 +383,7 @@ Run these checks against every draft, in order.
 Search the draft for:
 
 - every local identifier in the redaction list held with the internal routines
-- the city
 - the surrounding county
-- the local patch
-- the regional ICB
-- the sponsoring NHS organisation
 - named local services
 - named local sites
 - named local wards

@@ -14,9 +14,16 @@
     {{ partial "reader-key-body.html" . }}
   </section>
 
-  {{ if .Pages }}
+  {{/* Open source is already linked twice above (nav dropdown, the inline
+       bridge paragraph) - excluded here to avoid a third, redundant entry.
+       Everything else under /method/ (currently just Production) lists
+       below, under its own heading rather than appearing as an unlabelled
+       list straight after the reader key (the editor, 24 Jul). */}}
+  {{ $related := where .Pages "RelPermalink" "!=" "/method/open-source/" }}
+  {{ if $related }}
+    <h2>Further reading</h2>
     <ul class="content-list" role="list">
-      {{ range .Pages.ByDate.Reverse }}
+      {{ range $related.ByDate.Reverse }}
         <li class="content-list__item">
           <a href="{{ .RelPermalink }}">{{ .Title }}</a>
           {{ with .Params.description }}<p>{{ . }}</p>{{ end }}

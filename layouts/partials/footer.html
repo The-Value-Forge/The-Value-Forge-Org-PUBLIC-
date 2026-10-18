@@ -9,6 +9,7 @@
       <li><a href="/perspectives/">Perspectives</a></li>
       <li><a href="/feedback/">Feedback</a></li>
       <li><a href="/legal/">Legal</a></li>
+      <li><a href="/terms/">Terms</a></li>
       <li><a href="/index.xml">RSS</a></li>
       {{- with site.Params.repo_url }}<li><a href="{{ . }}" rel="noopener">Source</a></li>{{- end }}
       <li><a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC&nbsp;BY&nbsp;4.0</a></li>
@@ -19,3 +20,42 @@
     {{- end }}
   </div>
 </footer>
+{{/* Relative dates, computed WHEN READ rather than when built — see the note in
+     partials/reldate.html for why. Appends to the absolute date already in the
+     HTML rather than replacing it, so the reader always has the real
+     publication date and the counter is an addition, not a substitution. If
+     this script never runs, the page is still correct. */}}
+<script>
+(function () {
+  var els = document.querySelectorAll('time.reldate[datetime]');
+  if (!els.length) return;
+  var DAY = 864e5;
+  function ago(then, now) {
+    // Compare calendar days, not elapsed hours: something published at 23:00
+    // should read "yesterday" at 01:00, not "2 hours ago".
+    var a = new Date(then.getFullYear(), then.getMonth(), then.getDate());
+    var b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var days = Math.round((b - a) / DAY);
+    if (days < 0) return null;                    // future-dated (the Monthly is)
+    if (days === 0) return 'today';
+    if (days === 1) return 'yesterday';
+    if (days < 31) return days + ' days ago';
+    var months = Math.round(days / 30.44);
+    if (months < 12) return months === 1 ? 'a month ago' : months + ' months ago';
+    var years = Math.round(days / 365.25);
+    return years === 1 ? 'a year ago' : years + ' years ago';
+  }
+  var now = new Date();
+  els.forEach(function (el) {
+    if (el.querySelector('.reldate__ago')) return;   // already enhanced
+    var d = new Date(el.getAttribute('datetime'));
+    if (isNaN(d)) return;
+    var text = ago(d, now);
+    if (!text) return;
+    var span = document.createElement('span');
+    span.className = 'reldate__ago';
+    span.textContent = ' · ' + text;
+    el.appendChild(span);
+  });
+})();
+</script>

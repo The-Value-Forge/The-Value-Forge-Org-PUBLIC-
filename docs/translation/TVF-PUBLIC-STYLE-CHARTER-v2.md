@@ -58,7 +58,7 @@ Strip, without exception and without trace:
    the city; the surrounding county; the local patch; the regional ICB;
    the local needs assessment; named local services, sites, wards, or teams; named local ICB or ICS.
 2. **All personal identifiers:** the editor's name, role, employer, and anything that
-   connects them to The Value Forge. No author bylines. The publication speaks.
+   connects him to The Value Forge. No author bylines. The publication speaks.
 3. **All internal system references:** Slack channels, Drive folders, routine
    schedules, memory systems, session records.
 

@@ -1,0 +1,66 @@
+{{- /*
+  cite-link.html — turn the pipeline's in-body DOI strings into real reference
+  links, numbered against the page's own Sources list.
+
+  Context: a dict — "page" (the Page) and "body" (rendered HTML string).
+  Returns a plain string; the CALLER must pipe through safeHTML.
+
+  WHAT IT FIXES
+  From the 28 August batch onward the translator writes citations inline as
+  `(May-Miller & Swann, DOI: 10.1136/spcare-2025-005482)`. The site had a
+  transform for PMIDs (pmid-link.html) and none for DOIs, so a raw identifier
+  string sat in the middle of the prose, unlinked. the editor, 7 Sep: "it's not
+  linking correctly in the body and looks weird... no other publication looks
+  like this."
+
+  No other publication looks like that because no other publication prints the
+  identifier in the sentence. It prints an author name and a reference marker,
+  and puts the identifier in the reference list. That list already exists here
+  (sources.html renders .Params.sources at the foot), so the fix is to join the
+  two: strip the identifier out of the prose and leave a numbered marker that
+  jumps to the full entry.
+
+    before   (May-Miller & Swann, DOI: 10.1136/spcare-2025-005482)
+    after    (May-Miller & Swann¹)          ¹ → #source-1
+
+  HOW THE NUMBER IS DERIVED
+  Position in .Params.sources, matched on the doi field. That is the same order
+  sources.html renders in, so the marker and the list cannot disagree — there is
+  no second ordering to keep in step.
+
+  FAILURE MODE, BY DESIGN
+  A DOI in the prose that is absent from the page's `sources:` block cannot be
+  numbered, so it falls through to the second pass and becomes a plain doi.org
+  link instead. That is a visible, working link rather than a wrong number, and
+  it degrades no further than today's raw text. A page with no sources at all
+  skips the first pass entirely.
+*/ -}}
+{{- $page := .page -}}
+{{- $body := printf "%s" .body -}}
+
+{{- /* Pass one: DOIs the page actually cites, numbered to their Sources entry. */ -}}
+{{- with $page.Params.sources -}}
+  {{- range $i, $s := . -}}
+    {{- with $s.doi -}}
+      {{- $n := add $i 1 -}}
+      {{- /* Quote the regex metacharacters a DOI can legitimately contain.
+             `.` and `/` are near-universal; parentheses appear in Elsevier-style
+             ids such as 10.1016/S2215-0366(26)00193-8, which is in this very
+             corpus and is exactly the case a naive pattern gets wrong. */ -}}
+      {{- $q := . -}}
+      {{- range $m := slice "\\" "." "(" ")" "+" "*" "?" "[" "]" "{" "}" "^" "$" "|" -}}
+        {{- $q = replace $q $m (printf "\\%s" $m) -}}
+      {{- end -}}
+      {{- $marker := printf `<a class="cite-ref" href="#source-%d" aria-label="Source %d">%d</a>` $n $n $n -}}
+      {{- $body = replaceRE (printf `,?\s*DOI:\s*%s` $q) $marker $body -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Pass two: anything still carrying a raw DOI gets a working link at least.
+       The trailing [A-Za-z0-9] is load-bearing — it stops the match swallowing
+       the closing bracket of `(… DOI: 10.x/y)` while still allowing the interior
+       parentheses of an Elsevier id, because a DOI never ends in a bracket. */ -}}
+{{- $body = replaceRE `DOI:\s*(10\.\d{4,9}/[^\s<]*[A-Za-z0-9])` `<a class="cite-ref cite-ref--doi" href="https://doi.org/${1}" rel="external noopener">doi</a>` $body -}}
+
+{{- return $body -}}

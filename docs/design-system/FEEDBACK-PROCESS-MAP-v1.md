@@ -74,8 +74,15 @@ Recommended fields (chosen so triage maps cleanly to ledger fields):
 2. **Which page or domain?** — short answer (optional). → maps to ledger `domains` / link target.
 3. **Your feedback** — long answer (required). → the raw text to anonymise into `theme`.
 4. **Severity** (for bugs) — linear scale 1–3 or *Low/Med/High* (optional).
-5. **Email for follow-up** — short answer (optional, clearly marked *kept private, never published*).
-6. **Role** — *Clinician · Commissioner · Researcher · Other* (optional; helps weight, never published verbatim).
+5. **Role** — *Clinician · Commissioner · Researcher · Other* (optional; helps weight, never published verbatim).
+
+> **There is no email field. Removed 28 Jul 2026** (the editor: no individual replies), so the
+> form holds no personal data at all and generates no subject-access or erasure obligation of
+> its own. The response is the public ledger, not a private message. Consequence for this
+> flow: an address can now only arrive inside the free-text answer — and `/legal/` deliberately
+> asks for one there when the submission is a data-protection request about the email list.
+> `feedback_triage.py` redacts email-shaped text at staging (`redact_emails`), so the request
+> is actioned from the Sheet and the address never reaches the file triage works from.
 
 Keep it short — six fields max, two required at most. The Form's own confirmation message
 should say responses are read and that themes + responses appear publicly on `/feedback/`,
@@ -85,14 +92,26 @@ identities never.
 
 Two supported paths; primary first:
 
-1. **Direct read via MCP (preferred when live):** Claude Code reads the Form-responses
-   Sheet through the Google Drive MCP tools (`read_file_content` / `download_file_content`)
-   given the **Sheet ID**. Per the decoupling rule the Sheet ID is **not committed** — hold
-   it as a repo secret / local env (`FEEDBACK_SHEET_ID`), the same pattern as
-   `GDRIVE_FOLDER_ID`. Cadence: on demand, or weekly during active dev.
-2. **CSV export (no-MCP fallback):** the editor downloads the responses as CSV; Claude runs
-   `scripts/feedback_triage.py --csv <file>` to stage candidates. Useful when the MCP
-   connector isn't wired in a given session.
+1. **Direct Sheet read — IMPLEMENTED (24 Jul), `--sheet`.** `scripts/feedback_triage.py
+   --sheet` reads the Form-responses Sheet using the **same service account
+   `drive_sync.py` already uses** (`GDRIVE_SERVICE_ACCOUNT_KEY`), not the MCP connector —
+   so it works headlessly, in CI, and in any session regardless of which connectors are
+   wired. Per the decoupling rule the Sheet ID is **not committed**: it lives in
+   `FEEDBACK_SHEET_ID`, the same pattern as `GDRIVE_FOLDER_ID`.
+   *Implementation note:* a Google Sheet is not a plain file — `files().get_media()`
+   returns 403 for Google-native types — so this uses `files().export_media(mimeType=
+   "text/csv")` and feeds the result through the identical parser the `--csv` path uses
+   (`parse_rows`), so the two intake paths cannot drift.
+   **Setup, one-time:** share the responses Sheet with the service account's
+   `client_email` (Viewer is enough), and set `FEEDBACK_SHEET_ID`.
+2. **CSV export (fallback):** the editor downloads the responses as CSV; Claude runs
+   `scripts/feedback_triage.py --csv <file>`. Same parser, same output.
+
+**Tested:** `scripts/test_feedback_triage.py` (7 tests, run with plain `python3`) covers
+column mapping against the exact headers Google Forms generates from the six questions
+below — including the near-collision between *"Feedback type"* and *"Your feedback"* —
+blank-submission dropping, CSV/Sheet parser equivalence, and the hard privacy contract
+that **no respondent email can reach the staging file**.
 
 Either path lands raw responses in a **gitignored staging file** (`data/_feedback_staging.json`)
 — never straight into the public ledger.
@@ -100,8 +119,9 @@ Either path lands raw responses in a **gitignored staging file** (`data/_feedbac
 ## Triage — staging → curated ledger
 
 For each staged response:
-1. **Anonymise** — strip names, employer, location, any identifying detail; drop the email
-   (it stays in the Sheet only). If a quote can't be de-identified, paraphrase the theme.
+1. **Anonymise** — strip names, employer, location, any identifying detail. Addresses are
+   already redacted by the script, but check: automated redaction is a floor, not a
+   substitute for reading. If a quote can't be de-identified, paraphrase the theme.
 2. **Dedupe + theme** — fold similar items into one themed entry (the synthesis ethos
    applied to feedback). One ledger row per theme, not per submission.
 3. **Classify + status** — set `status` from the editorial vocabulary:

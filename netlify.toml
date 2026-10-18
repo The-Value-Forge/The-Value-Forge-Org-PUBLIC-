@@ -1,13 +1,24 @@
 [build]
-  # -b $DEPLOY_PRIME_URL: Netlify's per-context deploy URL — the production custom
-  # domain on production builds, but the actual deploy-preview-N--/branch-- subdomain
-  # on previews. $URL is NOT context-aware (it always resolves to the site's primary/
-  # production URL regardless of context), so using it here silently breaks every
-  # absolute link (RSS <link>/<guid>, sitemap.xml, canonical/OG/JSON-LD) on every
-  # preview and branch deploy — they'd all point at production instead of the preview
-  # being viewed. Found + fixed once before (3 Jul audit; docs/CODEBASE-AUDIT-2026-07-03.md
-  # C3); regressed back to $URL since. Do not "fix" this back to $URL.
-  command = "hugo --minify -b $DEPLOY_PRIME_URL && npx pagefind --site public"
+  # baseURL is set PER CONTEXT — neither variable is correct everywhere, and each
+  # one has already caused a real bug here. Do not collapse these back into one
+  # command; the history is:
+  #
+  #   $URL             = the site's primary URL. Correct on production (the custom
+  #                      domain), but NOT context-aware — on a deploy preview it
+  #                      still returns production, so every absolute link (RSS
+  #                      <link>/<guid>, sitemap <loc>, canonical/OG/JSON-LD) on the
+  #                      preview points at the live site instead of the preview
+  #                      being viewed. Found on the #39 preview, 23 Jul.
+  #   $DEPLOY_PRIME_URL = the per-deploy URL. Correct on previews, but in PRODUCTION
+  #                      context it resolves to the `main--` branch alias, so sitemap
+  #                      <loc> entries point at a different host than the primary URL
+  #                      serving the sitemap — search engines ignore cross-host
+  #                      entries. Found and fixed in PR #25, 3 Jul.
+  #
+  # So: production (and any unlisted context) takes $URL; previews and branch
+  # deploys take $DEPLOY_PRIME_URL. `publish` and `ignore` below are inherited by
+  # the context blocks — only `command` is overridden.
+  command = "hugo --minify -b $URL && npx pagefind --site public"
   publish = "public"
   # Minimise Netlify deploys: skip the build (exit 0) when a commit changed ONLY
   # non-site files (docs/, .claude/, scripts/, root *.md, .github/). Builds (exit 1)
@@ -19,6 +30,15 @@
 [build.environment]
   HUGO_VERSION = "0.147.0"
   NODE_VERSION = "20"
+
+# Previews and branch deploys: build against the URL actually being viewed, so
+# absolute links resolve to this deploy rather than to production. See the note
+# in [build] above for why production must NOT use $DEPLOY_PRIME_URL.
+[context.deploy-preview]
+  command = "hugo --minify -b $DEPLOY_PRIME_URL && npx pagefind --site public"
+
+[context.branch-deploy]
+  command = "hugo --minify -b $DEPLOY_PRIME_URL && npx pagefind --site public"
 
 [[headers]]
   for = "/*"

@@ -1,7 +1,10 @@
 # Routine: Slot 4 — Monthly Meta-Synthesis
-Version: 9.0 — 20 June 2026
+Version: 9.2 — 9 August 2026
+Changes from v9.1: **operational and tooling repetition explicitly barred from pattern recognition.** The frequency rule in Standing Functions weights cross-channel recurrence over individual significance, which is correct for clinical signal and actively dangerous for a daily fetch failure — the one thing guaranteed to recur across every channel every day. Nothing had yet been promoted this way, but the August 2026 access-caveat incident showed the same class of repetition reaching the published site through the weekly route. Backstop only; slot 1 v3.1 and slot 2 v3.2 stop it at source. Behaviour otherwise unchanged.
 Destination channel: #strategic-log
 Schedule: First Monday of each month
+
+Changes from v9.0: Step Eight rewritten to a **create-only Drive discipline**. The v9.0 instruction "update it in place — never create a duplicate" assumed an overwrite capability the Google Drive connector does not have, which is exactly what produced multiple same-named `PIPELINE-SUMMARY-2026-06.md` files. The routine now pre-flight checks for the target file, no-ops when a complete copy already exists, and — only when content genuinely changed — writes a dated variant and emits a manual-delete line rather than a same-named duplicate. Behaviour otherwise unchanged.
 
 Changes from v8: Editorial framing fully decoupled from any local NHS organisation. The analyst persona, population lens, theme rotation, deep-dive structure, output headers, and PIPELINE-SUMMARY schema are reframed from the local patch (the city / the surrounding county / the sponsoring NHS organisation / named trusts) to The Value Forge's standing mission — **national NHS practice benchmarked against international best practice, read through the VAT (value-added time) lens**. No references to the sponsoring NHS organisation, the city, the surrounding county, its constituent acute trust, the neighbouring county and the neighbouring district, or any named trust or place remain. The former "population commitment" and "the local patch specificity" sections become the **benchmarking commitment** and the **international benchmark** — the gap between current NHS practice and world best practice is the editorial filter throughout. A run-date guard is added at the top.
 
@@ -40,12 +43,12 @@ Apply these labels purposively, not decoratively. A [VF-Synthesis] label carries
 
 STEP ONE — READ THE MONTH'S INTELLIGENCE.
 Read all posts from the last thirty days in the following channels in The Value Forge Slack workspace:
-— #morning-brief 
-— #evidence-watch 
-— #weekly-synthesis 
-— #bulletin / Time Regained 
+— #morning-brief
+— #evidence-watch
+— #weekly-synthesis
+— #bulletin / Time Regained
 
-Also read all accessible posts in #strategic-log . For strategic-log posts older than 90 days that are no longer visible in Slack, read from the corresponding ARCHIVE-YYYY-MM-strategic-log.md files in the Archive (Builds) Google Drive folder (ID: <ARCHIVE_BUILDS_FOLDER_ID>). These are saved monthly by the Slack Preservation Archive routine. Previous months' strategic intelligence is essential context for pattern recognition, drift detection, and horizon analysis — do not proceed without it.
+Also read all accessible posts in #strategic-log. For strategic-log posts older than 90 days that are no longer visible in Slack, read from the corresponding ARCHIVE-YYYY-MM-strategic-log.md files in the Archive (Builds) Google Drive folder (ID: REDACTED). These are saved monthly by the Slack Preservation Archive routine. Previous months' strategic intelligence is essential context for pattern recognition, drift detection, and horizon analysis — do not proceed without it.
 
 Also read the most recent post in #google-memory-update — note any issues flagged there that bear on the quality of this month's intelligence before proceeding.
 
@@ -58,6 +61,8 @@ These run every month regardless of theme. They are analytical operations on the
 
 Pattern recognition. Read across all channel posts from the last thirty days. Identify recurring themes — topics, tensions, or developments that appeared multiple times across different channels or different weeks. Apply [VF-Pattern] to confirmed cross-channel recurrences. Weight frequency and cross-channel recurrence over individual significance.
 
+Operational and tooling repetition is NOT a pattern. A source that could not be fetched, a connector that failed, a routine that missed a run — these recur daily and across channels by their nature, so this frequency rule would rank them above genuine clinical signal if they were admitted at all. They are not intelligence and never become a [VF-Pattern], a weak signal, or a recurring open question. A publisher blocking automated fetches is a property of their bot protection, not a finding about health care. (Slot 1 v3.1 and slot 2 v3.2 stop these being emitted upstream; this is the backstop if one slips through.)
+
 Absence detection. Given the five clinical domains, the national NHS policy landscape, and the international best-practice benchmarks against which NHS practice is measured — what should have appeared in this month's intelligence but did not? Systematic absence is often more strategically significant than presence. Name what is missing and offer a hypothesis for why.
 
 Cross-domain convergences. Where did developments in different domains point in the same direction without being directly connected? Map these explicitly — apply [VF-Pattern] where convergence is confirmed. These are where whole-system thinking lives, and where the synthesis across domains — the publication's distinctive product — is generated.
@@ -69,7 +74,7 @@ Quarterly horizon scan. Based on this month's intelligence and the trajectory vi
 ---
 
 STEP THREE — IDENTIFY THIS MONTH'S DEEP DIVE THEME.
-First, check whether #strategic-log contains any previous posts beginning with "STRATEGIC INTELLIGENCE —". If Slack history is limited, also check whether any ARCHIVE-YYYY-MM-strategic-log.md files exist in the Archive (Builds) Google Drive folder (ID: <ARCHIVE_BUILDS_FOLDER_ID>).
+First, check whether #strategic-log contains any previous posts beginning with "STRATEGIC INTELLIGENCE —". If Slack history is limited, also check whether any ARCHIVE-YYYY-MM-strategic-log.md files exist in the Archive (Builds) Google Drive folder (ID: REDACTED).
 
 If NO previous posts exist in either Slack or Drive archives — this is the first edition. The deep dive theme is the FIRST EDITION EXPLAINER. Follow the First Edition instructions in Step Four. Do not use the calendar rotation for this run.
 
@@ -156,7 +161,7 @@ Implication for practice. What does this month's deep dive suggest should change
 ---
 
 STEP FIVE — DECEMBER ONLY: ANNUAL STRATEGIC SELF-AUDIT.
-In December, read back across all eleven previous strategic-log posts from the year — reading from ARCHIVE-YYYY-MM-strategic-log.md files in the Archive (Builds) Google Drive folder (ID: <ARCHIVE_BUILDS_FOLDER_ID>) for any months where Slack history is no longer accessible.
+In December, read back across all eleven previous strategic-log posts from the year — reading from ARCHIVE-YYYY-MM-strategic-log.md files in the Archive (Builds) Google Drive folder (ID: REDACTED) for any months where Slack history is no longer accessible.
 
 Annual pattern recognition. What themes recurred? What shifted? What was the year's most significant strategic insight?
 Mission integrity check. Has The Value Forge stayed true to its mission? Where did it drift — including any drift back toward local framing or away from the international benchmark?
@@ -224,7 +229,9 @@ Post to #strategic-log (C0B21L8RZSS) as a parent message followed by sequential 
 ---
 
 STEP EIGHT — SAVE THE MONTHLY OUTPUTS TO GOOGLE DRIVE.
-Immediately after posting to #strategic-log, write TWO files to the ROUTINE-OUTPUTS Google Drive folder (ID: <ROUTINE_OUTPUTS_FOLDER_ID>). Both are the weekly Public Translator's monthly read sources; the Public Translator is the single decoupling checkpoint between this internal intelligence and the public website. If a file with either exact name already exists in ROUTINE-OUTPUTS, update it in place — never create a duplicate.
+Immediately after posting to #strategic-log, write TWO files to the ROUTINE-OUTPUTS Google Drive folder (ID: REDACTED). Both are the weekly Public Translator's monthly read sources; the Public Translator is the single decoupling checkpoint between this internal intelligence and the public website.
+
+CREATE-ONLY DRIVE DISCIPLINE. The connector cannot overwrite, move, or delete — assuming it can is what produces duplicate files. For EACH of the two files below, before writing: check ROUTINE-OUTPUTS for an existing file of that exact name. (a) If it exists and is complete (non-trivial size, correct month), DO NOT write — record "canonical [name] already present, no write" in the run and move on. (b) If it does not exist, create it with the exact name given below. (c) If the existing file is genuinely superseded by revised content, do NOT reuse the name — write a dated variant "[name-stem]-rev-YYYY-MM-DD.md" and add a line to the #strategic-log run report: "SUPERSEDED — delete [old file ID] manually." Never create a second file under an identical name.
 
 8A — MONTHLY-REVIEW-YYYY-MM.md — the flagship deep dive.
 This is the public-facing source for the website's flagship Monthly Review. Save the full deep dive exactly as posted to #strategic-log MINUS the internal recursive self-audit: the standing functions, the monthly deep dive (Step Four), and the synthesising observation. Do NOT include Step Six (recursive self-audit) — that is internal routine governance and never goes public. Keep the full depth and length; this artefact is meant to read as substantially fuller and deeper than a weekly synthesis.
@@ -256,8 +263,8 @@ Note at the bottom: "This file is one of a series. For consolidation, read conse
 These two files are the LAST Drive writes this routine performs. Do not ask for confirmation. Save and stop.
 
 DRIVE ACCESS — RESTRICTED, ONE FOLDER ONE DIRECTION.
-WRITE only to the ROUTINE-OUTPUTS folder (ID: <ROUTINE_OUTPUTS_FOLDER_ID>).
-READ only from the Archive (Builds) folder (ID: <ARCHIVE_BUILDS_FOLDER_ID>), and only for archive fallback when Slack history is unavailable (Steps One, Three, Five).
+WRITE only to the ROUTINE-OUTPUTS folder (ID: REDACTED).
+READ only from the Archive (Builds) folder (ID: REDACTED), and only for archive fallback when Slack history is unavailable (Steps One, Three, Five).
 Do not access, read, list, retrieve, or write to any other file or folder under any circumstance.
 
 ---

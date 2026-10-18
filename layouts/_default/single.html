@@ -34,8 +34,18 @@
         {{ .Params.vat_signal_text }}
       </aside>
     {{ end }}
+    {{/* Registers for pipeline prose — domain sections and claim flags.
+         Shared with layouts/monthly/single.html via the partial, because the
+         Monthly has its own template and silently missed this when the logic
+         lived inline here. */}}
+    {{- $body := partial "claim-flags.html" . -}}
+    {{/* safeHTML is required, not cosmetic: .Content is template.HTML, but
+         replaceRE returns a plain string, and Hugo escapes plain strings on
+         output — without this the whole article body renders as visible
+         markup. Safe here because $body is our own rendered content, never
+         user input. */}}
     <div class="content-text">
-      {{ partial "pattern-link.html" (partial "pmid-link.html" .Content) }}
+      {{ $body | safeHTML }}
     </div>
     {{ partial "pattern-backlinks.html" . }}
     {{ partial "sources.html" . }}

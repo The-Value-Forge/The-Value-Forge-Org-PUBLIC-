@@ -1,0 +1,54 @@
+{{- /*
+  evidence-labels.html — set the pipeline's inline evidence vocabulary in the
+  label register instead of leaving it as bracketed text in the prose.
+
+  Context: a rendered HTML string. Returns a plain string; the CALLER must pipe
+  through safeHTML.
+
+  WHAT IT FIXES
+  The translator marks every claim in the body with its evidence type and, on a
+  pattern, its finding status:
+
+    … the first aggregated national data on this model [Audit/Data] (…)
+
+  Unstyled, `[Audit/Data]` reads as broken Markdown — a bracketed token that
+  looks like a link with its target missing. The same vocabulary is already a
+  first-class visual object elsewhere on the page: `.badge--evidence` in the
+  masthead. This gives the in-body instances the same meaning in a quieter
+  register, because a label inside a sentence must not shout down the sentence.
+
+  WHY NOT PILLS
+  999px pills carry evidence STATUS on this site (Provisional / Updated /
+  Confirmed). An evidence TYPE is a different axis, and the claim-flag comment in
+  main.css already settles that argument: mono, uppercase, no chrome. These
+  follow it.
+
+  FAILURE MODE, BY DESIGN
+  The vocabulary is closed by charter §6. A label outside the list is left
+  exactly as it is today — visible and plain — rather than being guessed at.
+*/ -}}
+{{- $b := printf "%s" . -}}
+
+{{- /* Evidence type. */ -}}
+{{- $b = replaceRE `\[(Meta-analysis|Primary Study|Synthesis|Audit/Data|Guidance)\]` `<span class="ev-label">${1}</span>` $b -}}
+
+{{- /* Finding status. Separate rules rather than one capture, so the class names
+       stay lowercase and the set stays visibly closed. */ -}}
+{{- $b = replaceRE `\[NEW\]` `<span class="ev-label ev-label--new">New</span>` $b -}}
+{{- $b = replaceRE `\[CONFIRMED\]` `<span class="ev-label ev-label--confirmed">Confirmed</span>` $b -}}
+{{- $b = replaceRE `\[UPDATED\]` `<span class="ev-label ev-label--updated">Updated</span>` $b -}}
+{{- $b = replaceRE `\[CONTESTED\]` `<span class="ev-label ev-label--contested">Contested</span>` $b -}}
+{{- $b = replaceRE `\[Unverified\]` `<span class="ev-label ev-label--contested">Unverified</span>` $b -}}
+
+{{- /* Claim tokens that are NOT opening a paragraph, so claim-flags.html has
+       rightly left them alone: the monthly closes several paragraphs with a
+       trailing `**[VF-Synthesis]**`, and its Synthesising Observation heading
+       carries one inline. Promoting those to a leading claim flag would put the
+       label in the wrong place; leaving them is what produced the bracketed
+       text. So they take the quiet label register instead, and the catch-all
+       guarantees the invariant this whole change exists to hold: no bracketed
+       token ever reaches the reader. */ -}}
+{{- $b = replaceRE `<strong>\[VF-(Pattern|Signal|Synthesis)\]</strong>` `<span class="ev-label ev-label--claim">${1}</span>` $b -}}
+{{- $b = replaceRE `\[VF-(Pattern|Signal|Synthesis)\]` `<span class="ev-label ev-label--claim">${1}</span>` $b -}}
+
+{{- return $b -}}

@@ -5,7 +5,7 @@ File routing (translator must follow this naming convention):
   signal--YYYY-MM-DD-slug.md     → content/signal/YYYY-MM-DD-slug.md
   synthesis--YYYY-MM-DD-slug.md  → content/synthesis/YYYY-MM-DD-slug.md
   monthly--YYYY-MM-slug.md       → content/monthly/YYYY-MM-slug.md
-  patterns.json                  → data/patterns.json (full replacement, GUARDED — see below)
+  patterns.json                  → IGNORED (legacy; the register is delta-driven)
   patterns-delta-YYYY-MM.json    → merged into data/patterns.json (translator v3.5+)
 
 The pattern register (data/patterns.json) is the site's only cumulative,
@@ -21,8 +21,11 @@ Two protections (docs/PATTERNS-LONGITUDINAL-DESIGN-2026-07.md):
   DELTA MERGE — translator v3.5+ emits patterns-delta-YYYY-MM.json (new
   patterns / new history entries / status updates only) instead of re-writing
   the whole file. Deltas are merged append-only and idempotently; multiple
-  deltas apply in month order. Full-file replacement stays supported (guarded)
-  for v3.4 compatibility.
+  deltas apply in month order. Full-file replacement FROM DRIVE is disabled
+  (10 Aug 2026): once a delta advances the register, any full file left in the
+  folder can only regress it, and four legacy copies turned the daily sync red
+  every morning. The monotonic guards below are unchanged and still apply to a
+  deliberate, hand-reviewed full replacement made in a PR.
 
 Required env vars:
   GDRIVE_SERVICE_ACCOUNT_KEY  JSON key for a GCP service account with Drive read access.
@@ -57,18 +60,23 @@ PMID_RE = re.compile(r"\bPMID[:\s]*\d{7,9}\b|\bPMIDs?[^)]*\d{7,9}", re.I)
 FRONTMATTER_REQUIRED = {
     "signal--":    ["domains", "domain", "evidence_label", "finding_status"],
     "synthesis--": ["domains", "domain", "evidence_label"],
+    # No `monthly--` entry on purpose: this check asserts list-shaped taxonomy
+    # fields, and the flagship's required fields (`month:`, `featured:`) are
+    # correctly scalars — adding it here fires on every Monthly forever. The
+    # flagship's real exposure is citation reachability, which
+    # check_citation_integrity covers directly.
 }
 
-# Known-bad Drive originals: the 19 Jun 2026 batch with uncorrected frontmatter.
-# Corrected same-name copies were uploaded 3 Jul 2026; until the originals are
-# trashed in Drive they must never overwrite the corrected copies (CLAUDE.md
-# action 2a). Safe to remove this list once they are trashed.
-DENYLIST_IDS = {
-    "1PU9OcPM5G3r-l9vcEvkluM-U7Q6sizgj",  # signal--2026-06-19-acp-gap-severe-frailty-convergence.md
-    "11Bl_25VJvsVITH8xMDKZK9OvWTugREYa",  # signal--2026-06-19-homehealth original
-    "1jGKl_tXuP-IZKCzJmyNOiAoI3V-oMzGn",  # signal--2026-06-19-opat-oral-switch original
-    "1DgwRZbrjXN3hYdQ5cuRy5uOXFDhJs9DF",  # synthesis--2026-06-19-week-ending-19-june.md
-}
+# NOTE — the four-ID denylist that stood here is GONE, deliberately, 7 Sep 2026.
+# It named the uncorrected 19 Jun 2026 originals so they could never overwrite
+# the corrected 3 Jul same-name copies. All four were trashed in Drive on
+# 7 Sep 2026 and the folder now returns exactly the four corrected copies for
+# `2026-06-19`, so the list could only go stale from here.
+#
+# The general guard is the newest-wins dedupe in the sync loop below, which is
+# what would have covered this case anyway; the IDs were belt-and-braces for a
+# window that has closed. Do not reintroduce a per-file ID list — fix the Drive
+# folder, or fix the dedupe rule.
 
 
 def check_frontmatter(name: str, data: bytes) -> list[str]:
@@ -96,6 +104,178 @@ def check_frontmatter(name: str, data: bytes) -> list[str]:
                 "(site tolerates it; the translator should emit a list)"
             )
     return warnings
+
+
+# Aggregate artefacts (synthesis, monthly) don't discover citations of their
+# own — they inherit them from the signals they synthesise. So an empty
+# `sources:` is not a shape error the way a missing `domain:` is; it is
+# indistinguishable from a correct one unless you read the body. That is
+# precisely how the 7 Aug 2026 synthesis AND the August flagship both reached
+# production with `sources: []` and every evidence claim in them unreachable,
+# on a green run, while the eight syntheses before them carried 12–22 sources
+# each. Cause: the translator's own SYNTHESIS and MONTHLY frontmatter templates
+# used `sources: []` as their literal worked example, while the SIGNAL template
+# showed a populated entry — so signals kept their references and only the
+# aggregates lost them (fixed in translator v3.8).
+#
+# The rule encoded here is the routine's own (§4.9 + the Monthly
+# cross-reference discipline): every restated finding is either cited in
+# `sources:` or cross-referenced to the site artefact that carries the
+# citation. An aggregate with NEITHER has no reachable evidence at all, which
+# breaks the static-copy rule outright. That fails the run RED rather than
+# adding a fourth line to a warnings block nobody reads — the 19-Jun lesson
+# was that GitHub only emails on failure.
+CROSSREF_RE = re.compile(r"\]\(/(?:signal|synthesis|monthly)/")
+
+
+def check_citation_integrity(name: str, data: bytes) -> list[str]:
+    """Error when any artefact carries no reachable evidence at all.
+
+    Covers every routed artefact type, not just the two that failed in August.
+    A Signal is one study and has no cross-reference escape — its `sources:`
+    must be populated outright. An aggregate may satisfy reachability either
+    way. Signals were undamaged in August only because their template happened
+    to show a populated entry; that is luck, not protection.
+    """
+    if not name.startswith(("signal--", "synthesis--", "monthly--")):
+        return []
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return []  # check_frontmatter already reports undecodable content
+    fm = re.match(r"^---\s*\n(.*?)\n---(.*)$", text, re.S)
+    if not fm:
+        return []  # check_frontmatter already reports a missing block
+    front, body = fm.group(1), fm.group(2)
+    # `sources:` is populated either inline (`sources: [ ... ]`) or, far more
+    # commonly, as a YAML block list whose own line is empty and whose entries
+    # are the indented lines that follow — so both shapes must count as present.
+    m = re.search(r"^sources:[ \t]*(.*)$((?:\n[ \t]+.*)*)", front, re.M)
+    if m and (m.group(1).strip() not in ("", "[]") or "- " in m.group(2)):
+        return []
+    if name.startswith("signal--"):
+        return [
+            f"{name}: `sources:` is empty — a Signal reports one study and MUST "
+            "carry its citation (charter §4.9). Fix the Drive original: a "
+            "repo-side fix is reverted by the next sync."
+        ]
+    if CROSSREF_RE.search(body):
+        return []  # claims reachable via the site's own artefacts instead
+    return [
+        f"{name}: `sources:` is empty AND the body carries no /signal/ or "
+        "/synthesis/ cross-reference — every evidence claim in this artefact is "
+        "unreachable to the reader (charter §4.9). Fix the Drive original: a "
+        "repo-side fix is reverted by the next sync."
+    ]
+
+
+def check_sources_reachable(name: str, data: bytes) -> list[str]:
+    """Error on any single source entry a reader cannot actually follow.
+
+    `check_citation_integrity` above asks whether an artefact has ANY reachable
+    evidence, which is the August failure it was written for. It cannot see a
+    populated `sources:` list in which one entry carries no pmid, no doi and no
+    url — and measured 13 September 2026 across all 124 published artefacts,
+    SIX entries are in exactly that state: a Written Ministerial Statement, a
+    letter to a named peer, two NHS England best-practice guides, a workforce
+    survey and a services listing. Each is named, none is followable.
+
+    That matters more for policy sources than for papers, not less. A journal
+    article can be found from its title; "Healthcare Services (Acute, Primary
+    and Community)" cannot, and a reader who cannot reach the source cannot
+    check the claim — which is the whole contract this publication runs on.
+    Needs no network, so unlike verify_sources it is a hard check rather than a
+    best-effort one.
+    """
+    if not name.startswith(("signal--", "synthesis--", "monthly--")):
+        return []
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError:
+        return []
+    fm = re.match(r"^---\s*\n(.*?)\n---", text, re.S)
+    if not fm:
+        return []
+    block = re.split(r"^sources:\s*$", fm.group(1), flags=re.M)
+    if len(block) < 2:
+        return []
+    out, cur, n = [], None, 0
+
+    def _flush(entry, idx):
+        if entry is None:
+            return
+        if any(entry.get(k, "").strip() for k in ("pmid", "doi", "url")):
+            return
+        out.append(f"{name}: source {idx} carries no pmid, no doi and no url — "
+                   f"unreachable to the reader: "
+                   f"{entry.get('title') or entry.get('citation') or '?'!r:.70}. "
+                   "Add a url. Fix the Drive original: a repo-side fix is "
+                   "reverted by the next sync.")
+
+    for line in block[1].splitlines():
+        # STOP at the next top-level key. Without this the reader runs straight
+        # out of `sources:` and into `tags:`, whose `  - frailty` items match
+        # the list-item pattern and become sources with no identifiers at all —
+        # so a clean artefact reported four unreachable entries that do not
+        # exist. Found 13 September 2026 by reading the file the count pointed
+        # at, which is the only reason it was caught.
+        if line.strip() and not line[:1].isspace():
+            break
+        if re.match(r"^\s*-\s", line):
+            _flush(cur, n)
+            cur, n = {}, n + 1
+            line = re.sub(r"^\s*-\s", "  ", line)
+        if cur is None:
+            continue
+        m = re.match(r'\s*(\w+):\s*"?(.*?)"?\s*$', line)
+        if m:
+            cur[m.group(1)] = m.group(2)
+    _flush(cur, n)
+    return out
+
+
+# A routine's Drive upload can silently land a tiny placeholder instead of the
+# artefact — a parameter error at the connector call. Three observed instances
+# by 7 Sep 2026: the August edition, evidence-watch Issue 19, and the 6 Sep
+# flagship, where a 24-byte stub took the place of MONTHLY-REVIEW-2026-09.md.
+#
+# Each was caught in-run by the routine that made it, which is the create-only
+# discipline working. This guard exists because that catch is not structural:
+# a 24-byte file is a VALID file. It parses, it routes, and — carrying no
+# frontmatter and no claims — it has nothing for check_frontmatter or
+# check_citation_integrity to fail on. A routine that is interrupted, runs out
+# of turn, or simply does not re-read its own write leaves a well-named,
+# complete-looking stub where the flagship should be.
+#
+# The floor is set from the artefacts that actually exist rather than guessed:
+# the smallest published signal is 1,384 bytes, the smallest synthesis 4,833,
+# the smallest monthly 31,128. 1KB therefore sits below every genuine artefact
+# and 42x above the observed stub. It is deliberately NOT scaled per type —
+# the depth rule now lets a thin month produce a short monthly, and a floor
+# that fails a legitimately brief artefact would be worse than the stub.
+MIN_ARTEFACT_BYTES = 1024
+
+
+def check_artefact_size(name: str, data: bytes) -> tuple[list[str], list[str]]:
+    """Return (warnings, errors) for an implausibly small routed artefact.
+
+    A monthly is the landing hero and the publication's most-read page, so a
+    stub there fails the run RED — same reasoning as check_citation_integrity,
+    that GitHub only emails on failure and a warnings block goes unread. A
+    signal or synthesis warns: losing a week to a hard failure is worse than
+    publishing one flagged file, which is the trade the sync already makes.
+    """
+    if not name.startswith(("signal--", "synthesis--", "monthly--")):
+        return [], []
+    if len(data) >= MIN_ARTEFACT_BYTES:
+        return [], []
+    msg = (
+        f"{name}: {len(data)} bytes — below the {MIN_ARTEFACT_BYTES}-byte floor, "
+        "so this is almost certainly a failed upload rather than a short "
+        "artefact (smallest real one to date: 1,384 bytes). Fix the Drive "
+        "original: a repo-side fix is reverted by the next sync."
+    )
+    return ([], [msg]) if name.startswith("monthly--") else ([msg], [])
 
 
 def _entry_has_reference(entry: dict) -> bool:
@@ -225,16 +405,79 @@ def _norm_title(t: str) -> str:
     return re.sub(r"[^a-z0-9 ]", "", t.lower()).strip()
 
 
+# Words too common in journal names to carry any identifying weight. Without
+# stripping these, "European Journal of X" and "American Journal of Y" share
+# half their tokens and any threshold becomes meaningless.
+_JOURNAL_STOP = {"the", "of", "and", "a", "an", "for", "in", "on", "journal",
+                 "international", "european", "american", "british", "annals",
+                 "archives", "review", "reviews", "research", "open", "science"}
+
+
+def _sig_words(s: str) -> set:
+    return {w for w in _norm_title(s).split() if w not in _JOURNAL_STOP}
+
+
+def _title_recall(cited: str, actual: str) -> tuple[float, float]:
+    """Delegate to verify_citations, which owns the measurement and its tests.
+
+    Imported lazily and by path: drive_sync runs inside the GitHub Action where
+    scripts/ is not necessarily on sys.path, and a failure to import must never
+    take the sync down over a warn-only check.
+    """
+    try:
+        import importlib.util
+        import pathlib
+        spec = importlib.util.spec_from_file_location(
+            "_vcit", pathlib.Path(__file__).resolve().parent / "verify_citations.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod.title_recall(cited, actual)
+    except Exception:
+        return 1.0, 1.0   # unverified, never a false alarm
+
+
 def compare_citation(local: dict, pubmed: dict) -> list[str]:
     """Diff one local sources: entry against its PubMed record. Pure function
     (unit-testable). Returns human-readable mismatch strings; empty = clean."""
     issues = []
-    lt, pt = _norm_title(local.get("title", "")), _norm_title(pubmed.get("title", ""))
-    if lt and pt:
-        l_tokens, p_tokens = set(lt.split()), set(pt.split())
-        overlap = len(l_tokens & p_tokens) / max(len(p_tokens), 1)
-        if overlap < 0.6:
-            issues.append(f"title mismatch (PubMed: \"{pubmed.get('title','')[:80]}\")")
+    # TITLE, measured against the record's MAIN CLAUSE with acronyms expanded.
+    #
+    # This check has always divided the overlap by the RECORD's tokens, which is
+    # the right direction -- it asks whether the citation reproduces the paper's
+    # title, not merely whether it overlaps it. But measured across the whole
+    # published corpus on 13 September 2026 it flagged five citations of which
+    # TWO were innocent, and missed a sixth that was not:
+    #
+    #   false positive  "Telehome-Based Palliative Care in Nursing Practice: An
+    #                   Integrative Review" -- the real subtitle continues "of
+    #                   Care Delivery, Caregiver Involvement and Service
+    #                   Coordination". The main clause is reproduced exactly.
+    #   false positive  "...anxiety and HRQoL in rheumatoid arthritis" for
+    #                   "...anxiety, and health-related quality of life in
+    #                   adults with rheumatoid arthritis". An acronym.
+    #   false NEGATIVE  "Clinical Frailty Scale and outcomes in elderly heart
+    #                   failure" for "...for risk stratification in elderly
+    #                   patients with heart failure" -- the study's stated
+    #                   purpose swapped for a vaguer one, propped above the
+    #                   threshold by the shared ": a meta-analysis" tail.
+    #
+    # A 40% false-positive rate is how a checker stops being read, and the
+    # September lesson is that a checker crying wolf is worse than none. So the
+    # comparison is now against the main clause only (journals hang the design
+    # on a subtitle and dropping it is legitimate practice, dropping the subject
+    # is not), acronyms are expanded from the record itself rather than a
+    # hand-kept table, and a low score is exonerated by character-level
+    # similarity -- because PubMed records sometimes arrive with capitals or
+    # italicised genus names stripped, and there the CITATION is right and the
+    # record is corrupt. Shared with verify_citations.py so the sync guard and
+    # the audit script cannot drift apart; that they had drifted is how each
+    # missed what the other caught.
+    if local.get("title") and pubmed.get("title"):
+        recall, char = _title_recall(local["title"], pubmed["title"])
+        if recall < 0.75 and char < 0.80:
+            issues.append(f"title mismatch — reproduces only {recall:.0%} of the "
+                          f"record's main clause (PubMed: "
+                          f"\"{pubmed.get('title','')[:80]}\")")
     ly, py = str(local.get("year", "")), str(pubmed.get("year", ""))
     if ly and py and ly != py:
         issues.append(f"year {ly} != PubMed {py}")
@@ -242,6 +485,35 @@ def compare_citation(local: dict, pubmed: dict) -> list[str]:
     pa = (pubmed.get("first_author") or "").split(" ")[0].lower()
     if la and pa and la != pa and la not in ("", "et"):
         issues.append(f"first author '{la}' != PubMed '{pa}'")
+    # JOURNAL, added 13 September 2026 — the hole in this guard.
+    #
+    # This function has checked title, year and first author since 10 July, when
+    # a cycle shipped a composed title. It has never looked at `container:`, and
+    # `parse_sources` did not even extract it. Measured that day across all 124
+    # published artefacts: SIX citations name the wrong journal — among them
+    # Sensors (Basel) published as "International Journal of COPD", European
+    # Urology Open Science as "BMJ Supportive & Palliative Care", and Annals of
+    # Medicine as "Journal of Antimicrobial Chemotherapy". Every one has the
+    # right PMID, the right DOI and the right first author, so title/year/author
+    # checking passed them all and would pass an identical artefact today.
+    #
+    # A wrong journal is not cosmetic. It is the field a reader uses to judge
+    # weight before opening anything, and a general-medicine journal presented
+    # as the field's flagship silently inflates the evidence.
+    #
+    # Matched on significant-word overlap against both the full title and the
+    # ISO abbreviation, because journals are cited in human form and PubMed
+    # stores several variants — the question is whether it is recognisably the
+    # same publication, not whether it is byte-equal.
+    lc = local.get("container") or ""
+    if lc:
+        cand = [pubmed.get("journal", ""), pubmed.get("journal_abbrev", "")]
+        lw = _sig_words(lc)
+        if lw and any(_sig_words(c) for c in cand):
+            if not any(_sig_words(c) and len(lw & _sig_words(c)) / len(lw) >= 0.5
+                       for c in cand):
+                issues.append(f"journal '{lc}' != PubMed "
+                              f"'{pubmed.get('journal', '')}'")
     return issues
 
 
@@ -253,7 +525,7 @@ def parse_sources(text: str) -> list[dict]:
     entries = []
     for block in re.split(r"(?=^\s*- authors:)", fm.group(1), flags=re.M)[1:]:
         e = {}
-        for field in ("authors", "title", "pmid"):
+        for field in ("authors", "title", "pmid", "container"):
             m = re.search(rf'^\s*{field}:\s*"?([^"\n]*)"?\s*$', block, re.M)
             if m:
                 e[field] = m.group(1).strip()
@@ -297,10 +569,53 @@ def verify_sources(name: str, data: bytes) -> list[str]:
             "title": (d.get("title") or "").rstrip("."),
             "year": (d.get("pubdate") or "")[:4],
             "first_author": (d.get("sortfirstauthor") or (d.get("authors") or [{}])[0].get("name", "")),
+            "journal": d.get("fulljournalname") or "",
+            "journal_abbrev": d.get("source") or "",
         }
         for issue in compare_citation(e, pubmed):
             warnings.append(f"{name}: PMID {e['pmid']} {issue}")
     return warnings
+
+
+def preserve_card_image(incoming: bytes, dest: Path) -> bytes:
+    """Carry a repo-side `card_image:` pin across a Drive overwrite.
+
+    Content files are owned by this sync and rewritten wholesale from Drive.
+    Drive originals never carry `card_image:`, so an editorially-pinned card
+    image was silently destroyed on the next run. A pin is a deliberate
+    editorial act (priority 1 in layouts/partials/card-art.html), so it
+    survives the overwrite.
+
+    This is NOT how routine art assignment works — that lives in
+    data/card_art.json and is resolved at render time (art_sync.py). Nothing
+    writes card_image: into content automatically any more; two jobs owning
+    one field is what produced the 12/19/26 July strip-restore oscillation and
+    a phantom production build after every real sync.
+
+    Idempotent by construction: re-running against an unchanged pair returns
+    byte-identical output, so it can never itself become a source of churn.
+    """
+    if not dest.exists():
+        return incoming
+    try:
+        current = dest.read_text(encoding="utf-8")
+        text = incoming.decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return incoming  # binary or unreadable: never guess
+
+    cur_fm = re.match(r"^---\s*\n(.*?)\n---", current, re.S)
+    inc_fm = re.match(r"^---\s*\n(.*?)\n---", text, re.S)
+    if not cur_fm or not inc_fm:
+        return incoming
+    pin = re.search(r"^card_image:.*$", cur_fm.group(1), re.M)
+    if not pin:
+        return incoming
+    if re.search(r"^card_image:", inc_fm.group(1), re.M):
+        return incoming  # incoming states its own value: Drive wins
+
+    # Re-insert immediately before the closing delimiter of the incoming block.
+    insert_at = inc_fm.end(1) + 1  # start of the closing "---" line
+    return (text[:insert_at] + pin.group(0) + "\n" + text[insert_at:]).encode("utf-8")
 
 
 def resolve_dest(name: str) -> Path | None:
@@ -367,14 +682,43 @@ def main():
     skipped = 0
     fm_warnings: list[str] = []
     guard_errors: list[str] = []
+    # Citation-integrity failures still sync the file — losing a week of content
+    # is worse than publishing it flagged — but they turn the run red so the
+    # failure arrives by email instead of dying in a step summary.
+    #
+    # SEVERITY DEPENDS ON WHETHER THIS RUN TOUCHED THE ARTEFACT (14 Sep 2026).
+    # `check_sources_reachable` shipped on 13 September and its first execution
+    # in production — the next morning — turned the sync RED on seven entries in
+    # five artefacts published in MAY AND JUNE. The check is right and the
+    # entries are real; the SEVERITY was wrong, and wrong in the one way this
+    # pipeline cannot afford. A sync that is red every morning on a backlog
+    # nobody can clear from the sync trains everyone to ignore a red sync, and
+    # the red sync is the only alarm the pipeline has: it is how the 7 Aug
+    # referencing loss would have been caught, and it is what the nine-day
+    # content-freshness heartbeat rides on. CLAUDE.md already records this exact
+    # reasoning about the hold-path 403 — "a red sync that needs a human on
+    # every hold will train people to ignore red syncs" — and then the next
+    # check shipped did it anyway.
+    #
+    # So the rule is accountability, not tolerance: THIS RUN IS ANSWERABLE FOR
+    # WHAT IT PUBLISHES, NOT FOR WHAT WAS PUBLISHED BEFORE IT. An artefact this
+    # run created or changed must be clean (hard error, red). An artefact it
+    # rewrote byte-identically is a pre-existing backlog item: still counted,
+    # still named in full every single run, never hidden — but it does not
+    # redden a run that introduced nothing.
+    #
+    # This is deliberately NOT an allowlist. The repo has already been bitten by
+    # one: CANONICAL_DOMAINS carried three legacy spellings so a check would not
+    # fire on the archive, and the tolerance outlived its cases, which meant a
+    # NEW artefact could ship any of them and pass. There is nothing here to
+    # maintain and nothing to go stale — the moment anything touches a
+    # defective artefact, every defect in it becomes blocking again.
+    integrity_errors: list[str] = []
+    integrity_backlog: list[str] = []
     seen_names: set[str] = set()
     delta_files: list[tuple[str, str]] = []  # (name, drive id) — processed after the loop
     for f in files:
         name = f["name"]
-        if f["id"] in DENYLIST_IDS:
-            print(f"  skipping {name} (denylisted stale original — CLAUDE.md action 2a)")
-            skipped += 1
-            continue
         # The listing is modifiedTime desc; without this guard an OLDER same-named
         # file is written after (and silently overwrites) the newest one. Newest wins.
         if name in seen_names:
@@ -386,19 +730,32 @@ def main():
             delta_files.append((name, f["id"]))
             continue
         if name == "patterns.json":
+            # A full patterns.json from Drive is IGNORED, by design (10 Aug 2026).
+            #
+            # Since translator v3.5 the register is delta-driven: the translator
+            # emits patterns-delta-YYYY-MM.json and never a whole file. So any
+            # full patterns.json appearing here is, by definition, a legacy
+            # artefact frozen at some past date — and once a delta has advanced
+            # the register past it, it can only ever REGRESS it. Four such files
+            # sat in the folder and turned the 08:10 sync red every morning with
+            # four guard failures each time.
+            #
+            # Denylisting their IDs was the first fix and it was the wrong shape:
+            # it treats a class of problem as four instances, so the next stray
+            # file starts the cycle again. Ignoring the filename outright means
+            # nothing that lands in that folder can regress the register, with no
+            # ID list to maintain.
+            #
+            # The monotonic guards are NOT relaxed — validate_patterns_full and
+            # its tests stay exactly as they were. A genuine full restore is a
+            # deliberate act: do it by hand in a PR, where a human reviews the
+            # diff. It is not something a file dropped in a shared folder should
+            # be able to trigger.
             seen_names.add(name)
-            data = download(f["id"])
-            errors, warnings = validate_patterns_full(data, PATTERNS_PATH)
-            fm_warnings.extend(warnings)
-            if errors:
-                guard_errors.extend(errors)
-                print(f"  HOLDING {name} — monotonic guard failure (register protected, file NOT written)")
-                skipped += 1
-                continue
-            PATTERNS_PATH.parent.mkdir(parents=True, exist_ok=True)
-            print(f"  syncing {name} → {PATTERNS_PATH} (guards passed)")
-            PATTERNS_PATH.write_bytes(data)
-            synced += 1
+            print(f"  ignoring {name} — the register is delta-driven "
+                  "(patterns-delta-YYYY-MM.json); full-file replacement from "
+                  "Drive is disabled by design")
+            skipped += 1
             continue
         dest = resolve_dest(name)
         if dest is None:
@@ -408,10 +765,33 @@ def main():
         seen_names.add(name)
         dest.parent.mkdir(parents=True, exist_ok=True)
         print(f"  syncing {name} → {dest}")
+        before = dest.read_bytes() if dest.exists() else None
         data = download(f["id"])
-        dest.write_bytes(data)
+        written = preserve_card_image(data, dest)
+        dest.write_bytes(written)
+        # `touched` is measured on the bytes that actually land in the tree, not
+        # on the bytes Drive returned — preserve_card_image rewrites one field,
+        # so comparing the download would call every artefact changed forever.
+        touched = before is None or written != before
         fm_warnings.extend(check_frontmatter(name, data))
         fm_warnings.extend(verify_sources(name, data))
+        citation_errors = check_citation_integrity(name, data)
+        citation_errors += check_sources_reachable(name, data)
+        (integrity_errors if touched else integrity_backlog).extend(citation_errors)
+        size_warnings, size_errors = check_artefact_size(name, data)
+        fm_warnings.extend(size_warnings)
+        # A SIZE ERROR IS ALWAYS HARD, TOUCHED OR NOT — and this exception is
+        # the whole reason the backlog split is scoped to the citation checks.
+        # The first version of the split routed size errors through it too, and
+        # test_size_guard_is_wired_into_the_sync_loop caught it immediately.
+        # It was right to: a stub is not an imperfection IN an artefact, it is
+        # the artefact missing — a 24-byte placeholder where the September
+        # flagship should be. If an unfixed stub in Drive re-synced identically
+        # every morning, it would go red once and then quietly green forever,
+        # which is the precise failure the size guard exists to prevent. The
+        # citation backlog is a long tail of historical imperfection on pages
+        # that otherwise work; a stub is the page not being there.
+        integrity_errors.extend(size_errors)
         synced += 1
 
     # Deltas merge in month order (filename-sorted ascending) so a later month's
@@ -450,6 +830,8 @@ def main():
     if gh_output:
         with open(gh_output, "a", encoding="utf-8") as fh:
             fh.write(f"guard_failures={len(guard_errors)}\n")
+            fh.write(f"integrity_failures={len(integrity_errors)}\n")
+            fh.write(f"integrity_backlog={len(integrity_backlog)}\n")
 
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if guard_errors:
@@ -465,6 +847,44 @@ def main():
                     "lost or rewritten existing record and was HELD. Fix the file in "
                     "TVF-PUBLIC-OUTPUT. If the change is genuinely intended (e.g. an editorial "
                     "retraction), apply it by hand in a PR with the reasoning in the commit.\n"
+                )
+
+    if integrity_errors:
+        print(f"\n::error::CITATION INTEGRITY ({len(integrity_errors)}) — artefact published with unreachable claims:")
+        for e in integrity_errors:
+            print(f"::error::  {e}")
+        if summary_path:
+            with open(summary_path, "a", encoding="utf-8") as fh:
+                fh.write("## 🛑 Citation integrity failures\n\n")
+                fh.writelines(f"- `{e}`\n" for e in integrity_errors)
+                fh.write(
+                    "\nThe file WAS synced (losing the cycle's content is worse than "
+                    "publishing it flagged), but every evidence claim in it is currently "
+                    "unreachable to the reader, which breaks the static-copy rule. Fix the "
+                    "Drive original in TVF-PUBLIC-OUTPUT — a repo-side fix is reverted by "
+                    "the next sync — then re-run this workflow.\n"
+                )
+
+    # Reported in full on EVERY run, and never allowed to become a number
+    # without names: a backlog you cannot read is a backlog nobody works.
+    if integrity_backlog:
+        print(
+            f"\n::warning::CITATION INTEGRITY BACKLOG ({len(integrity_backlog)}) — "
+            "pre-existing, NOT introduced by this run:"
+        )
+        for e in integrity_backlog:
+            print(f"::warning::  {e}")
+        if summary_path:
+            with open(summary_path, "a", encoding="utf-8") as fh:
+                fh.write("## 📌 Citation integrity backlog (pre-existing)\n\n")
+                fh.writelines(f"- `{e}`\n" for e in integrity_backlog)
+                fh.write(
+                    "\nThis run rewrote each of these artefacts byte-identically, so it "
+                    "introduced none of them — which is why the run is not red for them. "
+                    "They are real defects in already-published artefacts and they are "
+                    "listed here every run until the Drive originals are fixed. The moment "
+                    "any run CHANGES one of these artefacts, every defect in it becomes a "
+                    "hard failure again.\n"
                 )
 
     if fm_warnings:

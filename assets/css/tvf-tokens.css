@@ -34,4 +34,14 @@
   --vf-font-body:  -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --vf-font-head:  Georgia, "Times New Roman", serif;
   --vf-font-mono:  "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  /* — Type scale — */
+  --vf-text-xs:   0.6875rem;
+  --vf-text-sm:   0.8125rem;
+  --vf-text-base: 1rem;
+  --vf-text-lg:   1.125rem;
+  --vf-text-xl:   1.25rem;
+  --vf-text-2xl:  1.5rem;
+  --vf-text-3xl:  2rem;
+  --vf-text-4xl:  2.75rem;
 }
